@@ -4,7 +4,7 @@
 #include "Resources.h"
 #include <string>
 
-
+//TODO: should be enum class
 enum struct State
 {
 	STARTSCREEN,
@@ -12,6 +12,7 @@ enum struct State
 	ENDSCREEN
 };
 
+//TODO: should be enum class
 enum struct EntityType
 {
 	PLAYER,
@@ -25,14 +26,14 @@ struct PlayerData
 	std::string name;
 	int score;
 };
-
+//TODO: should be class
 struct Player
-{
+{//TODO: magic numbers
 public:
 
 	float x_pos = 0;
 	float speed = 7;
-	float player_base_height = 70.0f;  
+	float player_base_height = 70.0f;
 	float radius = 50;
 	int lives = 3;
 	int direction = 0;
@@ -44,17 +45,17 @@ public:
 	void Initialize();
 	void Render(Texture2D texture);
 	void Update();
-	
+
 };
 
-
+//TODO: should be class
 struct Projectile
-{
-public: 
+{//TODO: magic numbers
+public:
 	// INITIALIZE PROJECTILE WHILE DEFINING IF ITS PLAYER OR ENEMY 
-	Vector2 position = {0,0};
-	int speed = 15; 
-	bool active = true;  
+	Vector2 position = { 0,0 };
+	int speed = 15;
+	bool active = true;
 	EntityType type = {};
 
 	// LINE WILL UPDATE WITH POSITION FOR CALCULATIONS
@@ -65,42 +66,44 @@ public:
 
 	void Render(Texture2D texture);
 };
-
-struct Wall 
-{
-public: 
-	Vector2 position; 
-	Rectangle rec; 
-	bool active; 
-	Color color; 
+//TODO: should be class
+struct Wall
+{//TODO: magic numbers
+public:
+	Vector2 position;
+	Rectangle rec;
+	bool active;
+	Color color;
 	int health = 50;
 	int radius = 60;
 
 
-	void Render(Texture2D texture); 
-	void Update(); 
+	void Render(Texture2D texture);
+	void Update();
 };
 
+//TODO: should be class
 struct Alien
-{
+{//TODO: magic numbers
 public:
-	
-	Color color = WHITE; 
-	Vector2 position = {0, 0};
-	int x = 0; 
-	int y = 0; 
-	float radius = 30;
-	bool active = true;  
-	bool moveRight = true; 
-	
-	EntityType type = EntityType::ENEMY; 
 
-	int speed = 2; 
-		 
-	void Update(); 
-	void Render(Texture2D texture); 
+	Color color = WHITE;
+	Vector2 position = { 0, 0 };
+	int x = 0;
+	int y = 0;
+	float radius = 30;
+	bool active = true;
+	bool moveRight = true;
+
+	EntityType type = EntityType::ENEMY;
+
+	int speed = 2;
+
+	void Update();
+	void Render(Texture2D texture);
 };
 
+//TODO: should be class
 
 struct Star
 {
@@ -114,7 +117,7 @@ struct Star
 
 struct Background
 {
-	
+
 
 	std::vector<Star> Stars;
 
@@ -124,8 +127,9 @@ struct Background
 
 };
 
+//TODO: should be class
 struct Game
-{
+{//TODO: magic numbers
 	// Gamestate
 	State gameState = {};
 
@@ -139,7 +143,7 @@ struct Game
 	float shootTimer = 0;
 
 	//Aliens stuff? (idk cause liv wrote this)
-	Rectangle rec = { 0, 0 ,0 ,0 }; 
+	Rectangle rec = { 0, 0 ,0 ,0 };
 
 	int formationWidth = 8;
 	int formationHeight = 5;
@@ -148,7 +152,7 @@ struct Game
 	int formationY = 50;
 
 	bool newHighScore = false;
-	
+
 
 	void Start();
 	void End();
@@ -183,13 +187,13 @@ struct Game
 	std::vector<Alien> Aliens;
 
 	std::vector<PlayerData> Leaderboard = { {"Player 1", 500}, {"Player 2", 400}, {"Player 3", 300}, {"Player 4", 200}, {"Player 5", 100} };
-	
+
 	Background background;
 
 
 
 	Vector2 playerPos;
-	Vector2 alienPos; 
+	Vector2 alienPos;
 	Vector2 cornerPos;
 	float offset;
 

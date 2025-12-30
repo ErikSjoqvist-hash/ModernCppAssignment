@@ -2,8 +2,9 @@
 #include "raylib.h"
 #include "vector"
 
-struct Resources 
-{
+struct Resources
+{ //TODO: comments
+	//TODO: RAII?
 	void Load();
 	//void Unload();
 

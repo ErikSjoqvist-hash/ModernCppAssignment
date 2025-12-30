@@ -29,7 +29,7 @@
 // Program main entry point
 //------------------------------------------------------------------------------------
 int main(void)
-{    
+{
     // Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 1920;
@@ -44,15 +44,15 @@ int main(void)
     game.resources = resources;
     game.Launch();
 
-    
+
     //--------------------------------------------------------------------------------------
 
     InitAudioDevice();
 
     auto sound = LoadSound("./hitHurt.ogg");
-    
 
 
+    //TODO: comments
 
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -73,7 +73,7 @@ int main(void)
         //}
 
         game.Update();
-      
+
 
         // Draw
         //----------------------------------------------------------------------------------
@@ -81,7 +81,7 @@ int main(void)
 
         ClearBackground(BLACK);
 
-       
+
 
         game.Render();
 
@@ -90,13 +90,13 @@ int main(void)
     }
 
     CloseAudioDevice();
-    
+
     // De-Initialization
     //--------------------------------------------------------------------------------------
     CloseWindow();        // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
 
-    std::string filename = "level.txt";  
+    std::string filename = "level.txt";  //Todo: unused
 
     return 0;
 }

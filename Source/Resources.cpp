@@ -2,7 +2,8 @@
 #include <iostream>;
 
 void Resources::Load()
-{
+{//Todo: cout
+	//Todo: RAII?
 	std::cout << "Yay"; // yes
 	alienTexture = LoadTexture("./Assets/Alien.png");
 	barrierTexture = LoadTexture("./Assets/Barrier.png");
@@ -10,7 +11,7 @@ void Resources::Load()
 	shipTextures.push_back(LoadTexture("./Assets/Ship2.png"));
 	shipTextures.push_back(LoadTexture("./Assets/Ship3.png"));
 	laserTexture = LoadTexture("./Assets/Laser.png");
-}
+}//Todo: comments
 /*
 void Resources::Unload()
 {
