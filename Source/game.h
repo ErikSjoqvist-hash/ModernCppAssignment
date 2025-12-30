@@ -137,7 +137,7 @@ struct Game
 	int score;
 
 	// for later, make a file where you can adjust the number of walls (config file) 
-	int wallCount = 5;
+	
 
 	//Aliens shooting
 	float shootTimer = 0;

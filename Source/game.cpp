@@ -1,4 +1,5 @@
 #include "game.h"
+#include "Constants.h"
 #include <iostream>
 #include <vector>
 #include <chrono>
@@ -31,17 +32,18 @@ bool pointInCircle(Vector2 circlePos, float radius, Vector2 point) // Uses pytha
 
 void Game::Start()
 {//TODO: comments
-	//TODO: magic numbers
 	//TODO: raw for
+	// TODO: casting
 	// creating walls 
 	float window_width = (float)GetScreenWidth();
 	float window_height = (float)GetScreenHeight();
-	float wall_distance = window_width / (wallCount + 1);
-	for (int i = 0; i < wallCount; i++)
+	constexpr int gapCount{ wallCount + 1 };
+	float wall_distance = window_width / (gapCount);
+	for (int i = 1; i <= wallCount; i++)
 	{
 		Wall newWalls;
-		newWalls.position.y = window_height - 250;
-		newWalls.position.x = wall_distance * (i + 1);
+		newWalls.position.y = window_height - wallPositionOffset;
+		newWalls.position.x = wall_distance * i;
 
 		Walls.push_back(newWalls);
 
@@ -59,7 +61,7 @@ void Game::Start()
 
 	//creating background
 	Background newBackground;
-	newBackground.Initialize(600);
+	newBackground.Initialize(starCount);
 	background = newBackground;
 
 	//reset score
