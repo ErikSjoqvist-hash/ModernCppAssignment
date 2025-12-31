@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Constants
+namespace Constant
 {
 	namespace Wall
 	{
