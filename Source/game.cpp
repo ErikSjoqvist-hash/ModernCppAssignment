@@ -36,6 +36,8 @@ void Game::Start()
 
 	SpawnWalls();
 
+	Player newPlayer;// TODO: make reset player function
+	player = newPlayer;
 	player.Initialize();
 
 	SpawnAliens();
