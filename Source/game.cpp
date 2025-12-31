@@ -40,8 +40,7 @@ void Game::Start()
 
 
 	//creating player
-	Player newPlayer;// TODO: wierd smelly stuff
-	player = newPlayer;
+	
 	player.Initialize();
 
 	//creating aliens
