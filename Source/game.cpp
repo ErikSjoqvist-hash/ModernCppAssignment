@@ -32,27 +32,18 @@ bool pointInCircle(Vector2 circlePos, float radius, Vector2 point) // Uses pytha
 
 
 void Game::Start()
-{//TODO: comments
-	//TODO: raw for
-	// TODO: casting
+{
 
 	SpawnWalls();
 
-
-	//creating player
-	
 	player.Initialize();
 
-	//creating aliens
 	SpawnAliens();
 
 
-	//creating background
-	Background newBackground;
-	newBackground.Initialize(Constant::starCount);
-	background = newBackground;
+	background.Initialize(Constant::starCount); 
 
-	//reset score
+	
 	score = 0;
 
 	gameState = State::GAMEPLAY;
@@ -863,6 +854,8 @@ void Star::Render()
 
 void Background::Initialize(int starAmount)
 {//TODO: raw for
+	//TODO: magic values
+	//TODO: should starAmount constant be used directly?
 	for (int i = 0; i < starAmount; i++)
 	{
 		Star newStar;
