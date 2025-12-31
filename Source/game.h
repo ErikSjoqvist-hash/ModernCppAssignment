@@ -197,7 +197,7 @@ struct Game
 	char name[9 + 1] = "\0";      //One extra space required for null terminator char '\0'
 	int letterCount = 0;
 
-	Rectangle textBox = { 600, 500, 225, 50 };
+	
 	bool mouseOnText = false;
 
 	int framesCounter = 0;

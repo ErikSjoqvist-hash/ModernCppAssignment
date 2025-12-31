@@ -27,4 +27,9 @@ namespace Constant
 		constexpr int YCord = 50;
 	}
 
+	namespace UI
+	{
+		constexpr Rectangle textBox = { 600, 500, 225, 50 };
+	}
+
 }

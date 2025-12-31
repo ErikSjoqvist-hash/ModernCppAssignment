@@ -263,7 +263,7 @@ void Game::Update()
 
 		if (newHighScore)
 		{
-			if (CheckCollisionPointRec(GetMousePosition(), textBox)) mouseOnText = true;
+			if (CheckCollisionPointRec(GetMousePosition(), Constant::UI::textBox)) mouseOnText = true;
 			else mouseOnText = false;
 
 			if (mouseOnText)
@@ -396,7 +396,7 @@ void Game::Render()
 
 
 		if (newHighScore)
-		{
+		{ //TODO: casting
 			DrawText("NEW HIGHSCORE!", 600, 300, 60, YELLOW);
 
 
@@ -404,19 +404,19 @@ void Game::Render()
 			// BELOW CODE IS FOR NAME INPUT RENDER
 			DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, 20, YELLOW);
 
-			DrawRectangleRec(textBox, LIGHTGRAY);
+			DrawRectangleRec(Constant::UI::textBox, LIGHTGRAY);
 			if (mouseOnText)
 			{
 				// HOVER CONFIRMIATION
-				DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, RED);
+				DrawRectangleLines((int)Constant::UI::textBox.x, (int)Constant::UI::textBox.y, (int)Constant::UI::textBox.width, (int)Constant::UI::textBox.height, RED);
 			}
 			else
 			{
-				DrawRectangleLines((int)textBox.x, (int)textBox.y, (int)textBox.width, (int)textBox.height, DARKGRAY);
+				DrawRectangleLines((int)Constant::UI::textBox.x, (int)Constant::UI::textBox.y, (int)Constant::UI::textBox.width, (int)Constant::UI::textBox.height, DARKGRAY);
 			}
 
 			//Draw the name being typed out
-			DrawText(name, (int)textBox.x + 5, (int)textBox.y + 8, 40, MAROON);
+			DrawText(name, (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, 40, MAROON);
 
 			//Draw the text explaining how many characters are used
 			DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, 20, YELLOW);
@@ -428,7 +428,7 @@ void Game::Render()
 					// Draw blinking underscore char
 					if (((framesCounter / 20) % 2) == 0)
 					{
-						DrawText("_", (int)textBox.x + 8 + MeasureText(name, 40), (int)textBox.y + 12, 40, MAROON);
+						DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name, 40), (int)Constant::UI::textBox.y + 12, 40, MAROON);
 					}
 
 				}
