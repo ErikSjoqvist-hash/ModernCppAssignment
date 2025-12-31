@@ -343,9 +343,9 @@ void Game::Render()
 	{
 	case State::STARTSCREEN:
 		//Code
-		DrawText("SPACE INVADERS", 200, 100, 160, YELLOW);
+		DrawText("SPACE INVADERS", 200, 100, Constant::UI::FontSize::VeryLarge, YELLOW);
 
-		DrawText("PRESS SPACE TO BEGIN", 200, 350, 40, YELLOW);
+		DrawText("PRESS SPACE TO BEGIN", 200, 350, Constant::UI::FontSize::Medium, YELLOW);
 
 
 		break;
@@ -357,8 +357,8 @@ void Game::Render()
 		background.Render();
 
 		//DrawText("GAMEPLAY", 50, 30, 40, YELLOW);
-		DrawText(TextFormat("Score: %i", score), 50, 20, 40, YELLOW);
-		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, 40, YELLOW);
+		DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
+		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
 
 		//player rendering 
 		player.Render(resources.shipTextures[player.activeTexture]);
@@ -398,13 +398,13 @@ void Game::Render()
 
 
 		if (newHighScore)
-		{ 
-			DrawText("NEW HIGHSCORE!", 600, 300, 60, YELLOW);
+		{ //TODO: magic numbers
+			DrawText("NEW HIGHSCORE!", 600, 300, Constant::UI::FontSize::Large, YELLOW);
 
 
 
 			// BELOW CODE IS FOR NAME INPUT RENDER
-			DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, 20, YELLOW);
+			DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, Constant::UI::FontSize::Small, YELLOW);
 
 			DrawRectangleRec(Constant::UI::textBox, LIGHTGRAY);
 			if (mouseOnText)
@@ -418,10 +418,10 @@ void Game::Render()
 			}
 
 			//Draw the name being typed out
-			DrawText(name, (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, 40, MAROON);
+			DrawText(name, (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON);
 
 			//Draw the text explaining how many characters are used
-			DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, 20, YELLOW);
+			DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, Constant::UI::FontSize::Small, YELLOW);
 
 			if (mouseOnText)
 			{
@@ -430,14 +430,14 @@ void Game::Render()
 					// Draw blinking underscore char
 					if (((framesCounter / 20) % 2) == 0)
 					{
-						DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name, 40), (int)Constant::UI::textBox.y + 12, 40, MAROON);
+						DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name, 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON);
 					}
 
 				}
 				else
 				{
 					//Name needs to be shorter
-					DrawText("Press BACKSPACE to delete chars...", 600, 650, 20, YELLOW);
+					DrawText("Press BACKSPACE to delete chars...", 600, 650, Constant::UI::FontSize::Small, YELLOW);
 				}
 
 			}
@@ -445,21 +445,21 @@ void Game::Render()
 			// Explain how to continue when name is input
 			if (letterCount > 0 && letterCount < 9)
 			{
-				DrawText("PRESS ENTER TO CONTINUE", 600, 800, 40, YELLOW);
+				DrawText("PRESS ENTER TO CONTINUE", 600, 800, Constant::UI::FontSize::Medium, YELLOW);
 			}
 
 		}
 		else {
 			// If no highscore or name is entered, show scoreboard and call it a day
-			DrawText("PRESS ENTER TO CONTINUE", 600, 200, 40, YELLOW);
+			DrawText("PRESS ENTER TO CONTINUE", 600, 200, Constant::UI::FontSize::Medium, YELLOW);
 
-			DrawText("LEADERBOARD", 50, 100, 40, YELLOW);
+			DrawText("LEADERBOARD", 50, 100, Constant::UI::FontSize::Medium, YELLOW);
 
 			for (int i = 0; i < Leaderboard.size(); i++)
 			{
 				char* tempNameDisplay = Leaderboard[i].name.data();
-				DrawText(tempNameDisplay, 50, 140 + (i * 40), 40, YELLOW);
-				DrawText(TextFormat("%i", Leaderboard[i].score), 350, 140 + (i * 40), 40, YELLOW);
+				DrawText(tempNameDisplay, 50, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
+				DrawText(TextFormat("%i", Leaderboard[i].score), 350, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
 			}
 		}
 
@@ -773,7 +773,7 @@ void Wall::Render(Texture2D texture)
 		WHITE);
 
 
-	DrawText(TextFormat("%i", health), position.x - 21, position.y + 10, 40, RED);
+	DrawText(TextFormat("%i", health), position.x - 21, position.y + 10, Constant::UI::FontSize::Medium, RED);
 
 }
 

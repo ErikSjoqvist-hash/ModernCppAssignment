@@ -31,6 +31,16 @@ namespace Constant
 	{
 		constexpr Rectangle textBox{ 600, 500, 225, 50 };
 		constexpr float LineThickness{ 1.0f };
+
+		namespace FontSize
+		{
+			constexpr int Small{ 20 };
+			constexpr int Medium{ 40 };
+			constexpr int Large{ 60 };
+			constexpr int VeryLarge{ 160 };
+		}
 	}
+
+
 
 }
