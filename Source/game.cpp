@@ -223,7 +223,7 @@ void Game::Update()
 		// REMOVE INACTIVE/DEAD ENITITIES
 		
 		std::erase_if(Projectiles, [&](const Projectile projectile)
-		{
+			{
 				return !projectile.active;
 			});
 		std::erase_if(Aliens, [&](const Alien alien)
@@ -231,7 +231,7 @@ void Game::Update()
 				return !alien.active;
 			});
 		std::erase_if(Walls, [&](const Wall& wall)
-		{
+			{
 				return !wall.active;
 			});
 
@@ -351,21 +351,21 @@ void Game::Render()
 		player.Render(resources.shipTextures[player.activeTexture]);
 
 		//projectile rendering
-		for (int i = 0; i < Projectiles.size(); i++)
+		for (Projectile projectile : Projectiles)
 		{
-			Projectiles[i].Render(resources.laserTexture);
+			projectile.Render(resources.laserTexture);
 		}
 
 		// wall rendering 
-		for (int i = 0; i < Walls.size(); i++)
+		for (Wall wall : Walls)
 		{
-			Walls[i].Render(resources.barrierTexture);
+			wall.Render(resources.barrierTexture);
 		}
 
 		//alien rendering  
-		for (int i = 0; i < Aliens.size(); i++)
+		for (Alien alien : Aliens)
 		{
-			Aliens[i].Render(resources.alienTexture);
+			alien.Render(resources.alienTexture);
 		}
 
 
