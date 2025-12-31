@@ -11,14 +11,14 @@
 // MATH FUNCTIONS
 float lineLength(Vector2 A, Vector2 B) //Uses pythagoras to calculate the length of a line
 {
-	float length = sqrtf(pow(B.x - A.x, 2) + pow(B.y - A.y, 2));
+	const float length = sqrtf(pow(B.x - A.x, 2) + pow(B.y - A.y, 2));
 
 	return length;
 }
 //TODO: comments
 bool pointInCircle(Vector2 circlePos, float radius, Vector2 point) // Uses pythagoras to calculate if a point is within a circle or not
 { //TODO: unecesary if
-	float distanceToCentre = lineLength(circlePos, point);
+	const float distanceToCentre = lineLength(circlePos, point);
 
 	if (distanceToCentre < radius)
 	{
@@ -36,7 +36,7 @@ void Game::Start()
 
 	SpawnWalls();
 
-	Player newPlayer;// TODO: make reset player function
+	const Player newPlayer;// TODO: make reset player function
 	player = newPlayer;
 	player.Initialize();
 
@@ -457,7 +457,7 @@ void Game::Render()
 
 			for (int i = 0; i < Leaderboard.size(); i++)
 			{
-				char* tempNameDisplay = Leaderboard[i].name.data();
+				const char* tempNameDisplay = Leaderboard[i].name.data();
 				DrawText(tempNameDisplay, 50, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
 				DrawText(TextFormat("%i", Leaderboard[i].score), 350, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
 			}
@@ -592,31 +592,31 @@ bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineSta
 	}
 
 	// simplify variables
-	Vector2 A = lineStart;
-	Vector2 B = lineEnd;
-	Vector2 C = circlePos;
+	const Vector2 A = lineStart;
+	const Vector2 B = lineEnd;
+	const Vector2 C = circlePos;
 
 	// calculate the length of the line
-	float length = lineLength(A, B);
+	const float length = lineLength(A, B);
 
 	// calculate the dot product
-	float dotP = (((C.x - A.x) * (B.x - A.x)) + ((C.y - A.y) * (B.y - A.y))) / pow(length, 2);
+	const float dotP = (((C.x - A.x) * (B.x - A.x)) + ((C.y - A.y) * (B.y - A.y))) / pow(length, 2);
 
 	// use dot product to find closest point
-	float closestX = A.x + (dotP * (B.x - A.x));
-	float closestY = A.y + (dotP * (B.y - A.y));
+	const float closestX = A.x + (dotP * (B.x - A.x));
+	const float closestY = A.y + (dotP * (B.y - A.y));
 
 	//find out if coordinates are on the line.
 	// we do this by comparing the distance of the dot to the edges, with two vectors
 	// if the distance of the vectors combined is the same as the length the point is on the line
 
 	//since we are using floating points, we will allow the distance to be slightly innaccurate to create a smoother collision
-	float buffer = 0.1;
+	const float buffer = 0.1;
 
-	float closeToStart = lineLength(A, { closestX, closestY }); //closestX + Y compared to line Start
-	float closeToEnd = lineLength(B, { closestX, closestY });	//closestX + Y compared to line End
+	const float closeToStart = lineLength(A, { closestX, closestY }); //closestX + Y compared to line Start
+	const float closeToEnd = lineLength(B, { closestX, closestY });	//closestX + Y compared to line End
 
-	float closestLength = closeToStart + closeToEnd;
+	const float closestLength = closeToStart + closeToEnd;
 
 	if (closestLength == length + buffer || closestLength == length - buffer)
 	{
@@ -624,7 +624,7 @@ bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineSta
 
 		//Compare length between closest point and circle centre with circle radius
 
-		float closeToCentre = lineLength(A, { closestX, closestY }); //closestX + Y compared to circle centre
+		const float closeToCentre = lineLength(A, { closestX, closestY }); //closestX + Y compared to circle centre
 
 		if (closeToCentre < circleRadius)
 		{
