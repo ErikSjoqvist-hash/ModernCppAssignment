@@ -221,32 +221,19 @@ void Game::Update()
 		}
 
 		// REMOVE INACTIVE/DEAD ENITITIES
-		for (int i = 0; i < Projectiles.size(); i++)
+		
+		std::erase_if(Projectiles, [&](const Projectile projectile)
 		{
-			if (Projectiles[i].active == false)
+				return !projectile.active;
+			});
+		std::erase_if(Aliens, [&](const Alien alien)
 			{
-				Projectiles.erase(Projectiles.begin() + i);
-				// Prevent the loop from skipping an instance because of index changes, since all insances after
-				// the killed objects are moved down in index. This is the same for all loops with similar function
-				i--;
-			}
-		}
-		for (int i = 0; i < Aliens.size(); i++)
+				return !alien.active;
+			});
+		std::erase_if(Walls, [&](const Wall& wall)
 		{
-			if (Aliens[i].active == false)
-			{
-				Aliens.erase(Aliens.begin() + i);
-				i--;
-			}
-		}
-		for (int i = 0; i < Walls.size(); i++)
-		{
-			if (Walls[i].active == false)
-			{
-				Walls.erase(Walls.begin() + i);
-				i--;
-			}
-		}
+				return !wall.active;
+			});
 
 
 
