@@ -136,14 +136,11 @@ struct Game
 	// Score
 	int score;
 
-	// for later, make a file where you can adjust the number of walls (config file) 
 	
 
 	//Aliens shooting
 	float shootTimer = 0;
 
-	//Aliens stuff? (idk cause liv wrote this)
-	Rectangle rec = { 0, 0 ,0 ,0 };
 
 	int formationWidth = 8;
 	int formationHeight = 5;

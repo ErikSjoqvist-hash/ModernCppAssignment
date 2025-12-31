@@ -51,8 +51,7 @@ void Game::Start()
 }
 
 void Game::End()
-{//TODO: comments
-	//SAVE SCORE AND UPDATE SCOREBOARD
+{
 	Projectiles.clear();
 	Walls.clear();
 	Aliens.clear();
@@ -67,8 +66,7 @@ void Game::Continue()
 }
 
 void Game::Launch()
-{//TODO: comments
-	//LOAD SOME RESOURCES HERE
+{
 	resources.Load();
 }
 
@@ -125,6 +123,7 @@ void Game::Update()
 
 
 		// Update background with offset
+		// TODO: improve
 		playerPos = { player.x_pos, (float)player.player_base_height };
 		cornerPos = { 0, (float)player.player_base_height };
 		offset = lineLength(playerPos, cornerPos) * -1;
