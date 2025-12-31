@@ -29,7 +29,8 @@ namespace Constant
 
 	namespace UI
 	{
-		constexpr Rectangle textBox = { 600, 500, 225, 50 };
+		constexpr Rectangle textBox{ 600, 500, 225, 50 };
+		constexpr float LineThickness{ 1.0f };
 	}
 
 }

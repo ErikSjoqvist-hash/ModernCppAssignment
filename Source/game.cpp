@@ -398,7 +398,7 @@ void Game::Render()
 
 
 		if (newHighScore)
-		{ //TODO: casting
+		{ 
 			DrawText("NEW HIGHSCORE!", 600, 300, 60, YELLOW);
 
 
@@ -410,11 +410,11 @@ void Game::Render()
 			if (mouseOnText)
 			{
 				// HOVER CONFIRMIATION
-				DrawRectangleLines((int)Constant::UI::textBox.x, (int)Constant::UI::textBox.y, (int)Constant::UI::textBox.width, (int)Constant::UI::textBox.height, RED);
+				DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, RED);
 			}
 			else
 			{
-				DrawRectangleLines((int)Constant::UI::textBox.x, (int)Constant::UI::textBox.y, (int)Constant::UI::textBox.width, (int)Constant::UI::textBox.height, DARKGRAY);
+				DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
 			}
 
 			//Draw the name being typed out
