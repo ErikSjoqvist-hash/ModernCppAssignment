@@ -34,9 +34,9 @@ int main(void)
     //--------------------------------------------------------------------------------------
     
 
-    InitWindow(Constants::Window::Width, Constants::Window::Height, "SPACE INVADERS");
+    InitWindow(Constant::Window::Width, Constant::Window::Height, "SPACE INVADERS");
 
-    SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(Constant::Window::fps);               // Set our game to run at 60 frames-per-second
 
     Game game = { State::STARTSCREEN };
     Resources resources;
