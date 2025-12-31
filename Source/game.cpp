@@ -491,12 +491,12 @@ void Game::SpawnWalls()
 void Game::SpawnAliens()
 {//TODO: raw for
 	//TODO: nesting
-	for (int row = 0; row < formationHeight; row++) {
-		for (int col = 0; col < formationWidth; col++) {
+	for (int row = 0; row < Constant::EnemyFormation::Height; row++) {
+		for (int col = 0; col < Constant::EnemyFormation::Width; col++) {
 			Alien newAlien = Alien();
 			newAlien.active = true;
-			newAlien.position.x = formationX + 450 + (col * alienSpacing);
-			newAlien.position.y = formationY + (row * alienSpacing);
+			newAlien.position.x = Constant::EnemyFormation::YCord + 450 + (col * Constant::EnemyFormation::Spacing);
+			newAlien.position.y = Constant::EnemyFormation::YCord + (row * Constant::EnemyFormation::Spacing);
 			Aliens.push_back(newAlien);
 			std::cout << "Find Alien -X:" << newAlien.position.x << std::endl;
 			std::cout << "Find Alien -Y:" << newAlien.position.y << std::endl;

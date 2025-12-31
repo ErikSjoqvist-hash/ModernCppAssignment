@@ -142,11 +142,7 @@ struct Game
 	float shootTimer = 0;
 
 
-	int formationWidth = 8;
-	int formationHeight = 5;
-	int alienSpacing = 80;
-	int formationX = 100;
-	int formationY = 50;
+	
 
 	bool newHighScore = false;
 

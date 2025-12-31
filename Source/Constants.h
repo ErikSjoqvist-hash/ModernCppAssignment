@@ -18,5 +18,13 @@ namespace Constant
 		constexpr int fps = 60;
 	}
 
+	namespace EnemyFormation
+	{
+		constexpr int Width = 8;
+		constexpr int Height = 5;
+		constexpr int Spacing = 80;
+		constexpr int XCord = 100;
+		constexpr int YCord = 50;
+	}
 
 }
