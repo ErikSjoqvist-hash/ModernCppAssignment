@@ -1,7 +1,21 @@
 #pragma once
 
-constexpr int starCount{ 600 };
-constexpr int wallCount{ 5 };
+namespace Constants
+{
+	namespace Wall
+	{
+		constexpr int amount{ 5 };
+		constexpr int positionOffset{ 250 };
+	}
+
+	constexpr int starCount{ 600 };
 
 
-constexpr int wallPositionOffset{ 250 };
+	namespace Window
+	{
+		constexpr int Width = 1920;
+		constexpr int Height = 1080;
+	}
+
+
+}

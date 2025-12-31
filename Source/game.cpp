@@ -5,6 +5,7 @@
 #include <chrono>
 #include <thread>
 #include <fstream>
+#include <algorithm>
 
 //TODO: comments
 // MATH FUNCTIONS
@@ -34,24 +35,12 @@ void Game::Start()
 {//TODO: comments
 	//TODO: raw for
 	// TODO: casting
-	// creating walls 
-	float window_width = (float)GetScreenWidth();
-	float window_height = (float)GetScreenHeight();
-	constexpr int gapCount{ wallCount + 1 };
-	float wall_distance = window_width / (gapCount);
-	for (int i = 1; i <= wallCount; i++)
-	{
-		Wall newWalls;
-		newWalls.position.y = window_height - wallPositionOffset;
-		newWalls.position.x = wall_distance * i;
 
-		Walls.push_back(newWalls);
-
-	}
+	SpawnWalls();
 
 
 	//creating player
-	Player newPlayer;
+	Player newPlayer;// TODO: wierd smelly stuff
 	player = newPlayer;
 	player.Initialize();
 
@@ -61,7 +50,7 @@ void Game::Start()
 
 	//creating background
 	Background newBackground;
-	newBackground.Initialize(starCount);
+	newBackground.Initialize(Constants::starCount);
 	background = newBackground;
 
 	//reset score
@@ -126,7 +115,7 @@ void Game::Update()
 		{
 			Aliens[i].Update();
 
-			if (Aliens[i].position.y > GetScreenHeight() - player.player_base_height)
+			if (Aliens[i].position.y > Constants::Window::Height - player.player_base_height)
 			{
 				End();
 			}
@@ -187,7 +176,7 @@ void Game::Update()
 			{
 				if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
 				{
-					if (CheckCollision({ player.x_pos, GetScreenHeight() - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+					if (CheckCollision({ player.x_pos, Constants::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 					{
 						std::cout << "dead!\n";
 						Projectiles[i].active = false;
@@ -213,10 +202,9 @@ void Game::Update()
 		//MAKE PROJECTILE
 		if (IsKeyPressed(KEY_SPACE))
 		{
-			float window_height = (float)GetScreenHeight();
 			Projectile newProjectile;
 			newProjectile.position.x = player.x_pos;
-			newProjectile.position.y = window_height - 130;
+			newProjectile.position.y = Constants::Window::Height - 130;
 			newProjectile.type = EntityType::PLAYER_PROJECTILE;
 			Projectiles.push_back(newProjectile);
 		}
@@ -494,6 +482,23 @@ void Game::Render()
 	}
 }
 
+void Game::SpawnWalls()
+{
+	constexpr int gapCount{ Constants::Wall::amount + 1 };
+	float wall_distance = Constants::Window::Width / (gapCount);
+
+	Walls.resize(Constants::Wall::amount);
+	int iterator = 1;
+	std::ranges::generate(Walls, [&]
+		{
+			Wall wall;
+			wall.position.y = Constants::Window::Height - Constants::Wall::positionOffset;
+			wall.position.x = wall_distance * iterator++;
+			return wall;
+		});
+
+}
+
 void Game::SpawnAliens()
 {//TODO: raw for
 	//TODO: nesting
@@ -652,9 +657,8 @@ bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineSta
 void Player::Initialize()
 {//TODO: cout
 
-	float window_width = (float)GetScreenWidth();
-	x_pos = window_width / 2;
-	std::cout << "Find Player -X:" << GetScreenWidth() / 2 << "Find Player -Y" << GetScreenHeight() - player_base_height << std::endl;
+	x_pos = Constants::Window::Width / 2;
+	std::cout << "Find Player -X:" << Constants::Window::Width / 2 << "Find Player -Y" << Constants::Window::Height - player_base_height << std::endl;
 
 }
 
@@ -678,9 +682,9 @@ void Player::Update()
 	{
 		x_pos = 0 + radius;
 	}
-	else if (x_pos > GetScreenWidth() - radius)
+	else if (x_pos > Constants::Window::Width - radius)
 	{
-		x_pos = GetScreenWidth() - radius;
+		x_pos = Constants::Window::Width - radius;
 	}
 
 
@@ -703,7 +707,6 @@ void Player::Update()
 
 void Player::Render(Texture2D texture)
 {//TODO: magic numbers
-	float window_height = GetScreenHeight();
 
 	DrawTexturePro(texture,
 		{
@@ -713,7 +716,7 @@ void Player::Render(Texture2D texture)
 			352,
 		},
 		{
-			x_pos, window_height - player_base_height,
+			x_pos, Constants::Window::Height - player_base_height,
 			100,
 			100,
 		}, { 50, 50 },
@@ -797,13 +800,12 @@ void Wall::Update()
 
 void Alien::Update()
 {//TODO: nesting
-	int window_width = GetScreenWidth();
 
 	if (moveRight)
 	{
 		position.x += speed;
 
-		if (position.x >= GetScreenWidth())
+		if (position.x >= Constants::Window::Width)
 		{
 			moveRight = false;
 			position.y += 50;
@@ -866,8 +868,8 @@ void Background::Initialize(int starAmount)
 	{
 		Star newStar;
 
-		newStar.initPosition.x = GetRandomValue(-150, GetScreenWidth() + 150);
-		newStar.initPosition.y = GetRandomValue(0, GetScreenHeight());
+		newStar.initPosition.x = GetRandomValue(-150, Constants::Window::Width + 150);
+		newStar.initPosition.y = GetRandomValue(0, Constants::Window::Height);
 
 		//random color?
 		newStar.color = SKYBLUE;

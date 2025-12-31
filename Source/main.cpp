@@ -23,7 +23,7 @@
 
 #include "raylib.h"
 #include "game.h"
-
+#include "Constants.h"
 
 //------------------------------------------------------------------------------------
 // Program main entry point
@@ -32,10 +32,9 @@ int main(void)
 {
     // Initialization
     //--------------------------------------------------------------------------------------
-    const int screenWidth = 1920;
-    const int screenHeight = 1080;
+    
 
-    InitWindow(screenWidth, screenHeight, "SPACE INVADERS");
+    InitWindow(Constants::Window::Width, Constants::Window::Height, "SPACE INVADERS");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
 
