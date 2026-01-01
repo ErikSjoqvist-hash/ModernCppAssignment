@@ -97,7 +97,6 @@ void Game::Update()
 			End();
 		}
 
-		//Update Player
 		player.Update();
 
 		
@@ -105,7 +104,7 @@ void Game::Update()
 			alien.Update();
 			});
 
-		handleLoseConditions();
+		HandleLoseConditions();
 
 		//Spawn new aliens if aliens run out
 		if (Aliens.size() < 1)
@@ -163,18 +162,7 @@ void Game::Update()
 		}
 
 
-		std::erase_if(Projectiles, [&](const Projectile projectile)
-			{
-				return !projectile.active;
-			});
-		std::erase_if(Aliens, [&](const Alien alien)
-			{
-				return !alien.active;
-			});
-		std::erase_if(Walls, [&](const Wall& wall)
-			{
-				return !wall.active;
-			});
+		EraseInactiveEntities();
 
 
 
@@ -260,7 +248,23 @@ void Game::Update()
 	}
 }
 
-void Game::handleLoseConditions()
+void Game::EraseInactiveEntities()
+{
+	std::erase_if(Projectiles, [&](const Projectile projectile)
+		{
+			return !projectile.active;
+		});
+	std::erase_if(Aliens, [&](const Alien alien)
+		{
+			return !alien.active;
+		});
+	std::erase_if(Walls, [&](const Wall& wall)
+		{
+			return !wall.active;
+		});
+}
+
+void Game::HandleLoseConditions()
 {
 	if (std::ranges::any_of(Aliens, [&](const Alien& alien) {
 		return alien.position.y > Constant::Window::Height - player.player_base_height;
