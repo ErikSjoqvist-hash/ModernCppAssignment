@@ -513,18 +513,7 @@ void Game::InsertNewHighScore(std::string name)
 		}
 	}
 }
-void Game::LoadLeaderboard()
-{ // TODO: unimplemented
-	// CLEAR LEADERBOARD
 
-	// OPEN FILE
-
-	// READ DATA
-
-	// WRITE DATA ONTO LEADERBOARD
-
-	//CLOSE FILE
-}
 
 void Game::SaveLeaderboard()
 {//TODO: comments
