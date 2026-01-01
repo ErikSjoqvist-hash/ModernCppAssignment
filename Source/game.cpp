@@ -43,9 +43,9 @@ void Game::Start()
 	SpawnAliens();
 
 
-	background.Initialize(Constant::starCount); 
+	background.Initialize(Constant::starCount);
 
-	
+
 	score = 0;
 
 	gameState = State::GAMEPLAY;
@@ -160,18 +160,17 @@ void Game::Update()
 			}
 
 			//ENEMY PROJECTILES HERE
-			for (int i = 0; i < Projectiles.size(); i++)
+
+			if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
 			{
-				if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
+				if (CheckCollision({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 				{
-					if (CheckCollision({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-					{
-						std::cout << "dead!\n";
-						Projectiles[i].active = false;
-						player.lives -= 1;
-					}
+					std::cout << "dead!\n";
+					Projectiles[i].active = false;
+					player.lives -= 1;
 				}
 			}
+
 
 
 			for (int b = 0; b < Walls.size(); b++)
@@ -217,8 +216,7 @@ void Game::Update()
 			shootTimer = 0;
 		}
 
-		// REMOVE INACTIVE/DEAD ENITITIES
-		
+
 		std::erase_if(Projectiles, [&](const Projectile projectile)
 			{
 				return !projectile.active;
@@ -344,7 +342,7 @@ void Game::Render()
 		DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
 		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
 
-		 
+
 		player.Render(resources.shipTextures[player.activeTexture]);
 
 		std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
