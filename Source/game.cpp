@@ -101,14 +101,14 @@ void Game::Update()
 		player.Update();
 
 		//Update Aliens and Check if they are past player
-		for (int i = 0; i < Aliens.size(); i++)
-		{
-			Aliens[i].Update();
+		for (auto& alien : Aliens) {
+			alien.Update();
+		}
 
-			if (Aliens[i].position.y > Constant::Window::Height - player.player_base_height)
-			{
-				End();
-			}
+		if (std::ranges::any_of(Aliens, [&](const Alien& a) {
+			return a.position.y > Constant::Window::Height - player.player_base_height;
+			})) {
+			End();
 		}
 
 		//End game if player dies

@@ -174,7 +174,7 @@ struct Game
 
 	Player player;
 
-	std::vector<Projectile> Projectiles;
+	std::vector<Projectile> Projectiles; //TODO: pool?
 
 	std::vector<Wall> Walls;
 
