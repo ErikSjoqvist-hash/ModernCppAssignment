@@ -100,13 +100,13 @@ void Game::Update()
 		//Update Player
 		player.Update();
 
-		//Update Aliens and Check if they are past player
-		for (auto& alien : Aliens) {
+		
+		std::ranges::for_each(Aliens, [&](Alien& alien) {
 			alien.Update();
-		}
+			});
 
-		if (std::ranges::any_of(Aliens, [&](const Alien& a) {
-			return a.position.y > Constant::Window::Height - player.player_base_height;
+		if (std::ranges::any_of(Aliens, [&](const Alien& alien) {
+			return alien.position.y > Constant::Window::Height - player.player_base_height;
 			})) {
 			End();
 		}
@@ -132,7 +132,7 @@ void Game::Update()
 		background.Update(offset / 15);
 
 
-		std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
+		std::ranges::for_each(Projectiles, [&](Projectile& projectile) { //TODO: inconsisten ampersand placement
 			projectile.Update();
 			});
 
@@ -140,51 +140,7 @@ void Game::Update()
 			wall.Update();
 			});
 
-		//CHECK ALL COLLISONS HERE
-		for (int i = 0; i < Projectiles.size(); i++)
-		{
-			if (Projectiles[i].type == EntityType::PLAYER_PROJECTILE)
-			{
-				for (int a = 0; a < Aliens.size(); a++)
-				{
-					if (CheckCollision(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-					{
-						// Kill!
-						std::cout << "Hit! \n";
-						// Set them as inactive, will be killed later
-						Projectiles[i].active = false;
-						Aliens[a].active = false;
-						score += 100;
-					}
-				}
-			}
-
-			//ENEMY PROJECTILES HERE
-
-			if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
-			{
-				if (CheckCollision({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-				{
-					std::cout << "dead!\n";
-					Projectiles[i].active = false;
-					player.lives -= 1;
-				}
-			}
-
-
-
-			for (int b = 0; b < Walls.size(); b++)
-			{
-				if (CheckCollision(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-				{
-					// Kill!
-					std::cout << "Hit! \n";
-					// Set them as inactive, will be killed later
-					Projectiles[i].active = false;
-					Walls[b].health -= 1;
-				}
-			}
-		}
+		Collision();
 
 		//MAKE PROJECTILE
 		if (IsKeyPressed(KEY_SPACE))
@@ -311,6 +267,54 @@ void Game::Update()
 	default:
 		//SHOULD NOT HAPPEN
 		break;
+	}
+}
+
+void Game::Collision()// TODO: improve name
+{
+	for (int i = 0; i < Projectiles.size(); i++)
+	{
+		if (Projectiles[i].type == EntityType::PLAYER_PROJECTILE)
+		{
+			for (int a = 0; a < Aliens.size(); a++)
+			{
+				if (CheckCollision(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+				{
+					// Kill!
+					std::cout << "Hit! \n";
+					// Set them as inactive, will be killed later
+					Projectiles[i].active = false;
+					Aliens[a].active = false;
+					score += 100;
+				}
+			}
+		}
+
+		//ENEMY PROJECTILES HERE
+
+		if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
+		{
+			if (CheckCollision({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+			{
+				std::cout << "dead!\n";
+				Projectiles[i].active = false;
+				player.lives -= 1;
+			}
+		}
+
+
+
+		for (int b = 0; b < Walls.size(); b++)
+		{
+			if (CheckCollision(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+			{
+				// Kill!
+				std::cout << "Hit! \n";
+				// Set them as inactive, will be killed later
+				Projectiles[i].active = false;
+				Walls[b].health -= 1;
+			}
+		}
 	}
 }
 

@@ -154,6 +154,7 @@ struct Game
 	void Launch();
 
 	void Update();
+	void Collision();
 	void Render();
 
 	void SpawnWalls();
