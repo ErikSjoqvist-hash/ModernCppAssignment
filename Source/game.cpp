@@ -103,7 +103,7 @@ void Game::HandleInput()
 			Projectiles.push_back(newProjectile);
 		}
 
-		
+
 
 
 		break;
@@ -111,10 +111,10 @@ void Game::HandleInput()
 		//Code
 
 		//Exit endscreen
-	if (IsKeyReleased(KEY_ENTER) && !newHighScore)
-	{
-		Continue();
-	}
+		if (IsKeyReleased(KEY_ENTER) && !newHighScore)
+		{
+			Continue();
+		}
 
 
 
@@ -182,7 +182,6 @@ void Game::HandleInput()
 
 		break;
 	default:
-		//SHOULD NOT HAPPEN
 		break;
 	}
 }
@@ -197,48 +196,37 @@ void Game::Update()
 	{
 	case State::STARTSCREEN:
 		//Code 
-		
+
 
 		break;
 	case State::GAMEPLAY:
-		
 
-		player.Update();
 
-		
-		std::ranges::for_each(Aliens, [&](Alien& alien) {
-			alien.Update();
-			});
+		UpdatePlayer();
+
+
+		UpdateProjectiles();
+
+		UpdateWalls();
+
+		UpdateAliens();
 
 		HandleLoseConditions();
 
-		//Spawn new aliens if aliens run out
-		if (Aliens.size() < 1)
-		{
-			SpawnAliens();
-		}
 
 
 		// Update background with offset
 		// TODO: improve
-		playerPos = { player.x_pos, (float)player.player_base_height };
-		cornerPos = { 0, (float)player.player_base_height };
+		playerPos = { player.x_pos, player.player_base_height };
+		cornerPos = { 0, player.player_base_height };
 		offset = lineLength(playerPos, cornerPos) * -1;
 		background.Update(offset / 15);
 
 
-		std::ranges::for_each(Projectiles, [&](Projectile& projectile) { //TODO: inconsisten ampersand placement
-			projectile.Update();
-			});
-
-		std::ranges::for_each(Walls, [&](Wall& wall) {
-			wall.Update();
-			});
-
 		Collision();
 
 		//MAKE PROJECTILE
-	
+
 
 		shootTimer += 1;
 		if (shootTimer > 59) //once per second
@@ -262,17 +250,44 @@ void Game::Update()
 
 		EraseInactiveEntities();
 
-
-
-
 		break;
 	case State::ENDSCREEN:
-		
+
 
 		break;
 	default:
 		//SHOULD NOT HAPPEN
 		break;
+	}
+}
+
+void Game::UpdatePlayer()
+{
+	player.Update();
+}
+
+void Game::UpdateProjectiles()
+{
+	std::ranges::for_each(Projectiles, [&](Projectile& projectile) { //TODO: inconsisten ampersand placement
+		projectile.Update();
+		});
+}
+
+void Game::UpdateWalls()
+{
+	std::ranges::for_each(Walls, [&](Wall& wall) {
+		wall.Update();
+		});
+}
+
+void Game::UpdateAliens()
+{
+	std::ranges::for_each(Aliens, [&](Alien& alien) {
+		alien.Update();
+		});
+	if (Aliens.size() < 1)
+	{
+		SpawnAliens();
 	}
 }
 

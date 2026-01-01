@@ -156,6 +156,10 @@ struct Game
 	void HandleInput();
 
 	void Update();
+	void UpdatePlayer();
+	void UpdateProjectiles();
+	void UpdateWalls();
+	void UpdateAliens();
 	void EraseInactiveEntities();
 	void HandleLoseConditions();
 	void Collision();
