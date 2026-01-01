@@ -132,16 +132,13 @@ void Game::Update()
 		background.Update(offset / 15);
 
 
-		//UPDATE PROJECTILE
-		for (Projectile projectile : Projectiles)
-		{
+		std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
 			projectile.Update();
-		}
-		//UPDATE PROJECTILE
-		for (Wall wall : Walls)
-		{
+			});
+
+		std::ranges::for_each(Walls, [&](Wall& wall) {
 			wall.Update();
-		}
+			});
 
 		//CHECK ALL COLLISONS HERE
 		for (int i = 0; i < Projectiles.size(); i++)
@@ -347,29 +344,20 @@ void Game::Render()
 		DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
 		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
 
-		//player rendering 
+		 
 		player.Render(resources.shipTextures[player.activeTexture]);
 
-		//projectile rendering
-		for (Projectile projectile : Projectiles)
-		{
+		std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
 			projectile.Render(resources.laserTexture);
-		}
+			});
 
-		// wall rendering 
-		for (Wall wall : Walls)
-		{
+		std::ranges::for_each(Walls, [&](Wall& wall) {
 			wall.Render(resources.barrierTexture);
-		}
+			});
 
-		//alien rendering  
-		for (Alien alien : Aliens)
-		{
+		std::ranges::for_each(Aliens, [&](Alien& alien) {
 			alien.Render(resources.alienTexture);
-		}
-
-
-
+			});
 
 
 
