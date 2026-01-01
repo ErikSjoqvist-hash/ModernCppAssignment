@@ -154,6 +154,7 @@ struct Game
 	void Launch();
 
 	void Update();
+	void handleLoseConditions();
 	void Collision();
 	void Render();
 

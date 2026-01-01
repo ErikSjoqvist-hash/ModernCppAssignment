@@ -105,17 +105,7 @@ void Game::Update()
 			alien.Update();
 			});
 
-		if (std::ranges::any_of(Aliens, [&](const Alien& alien) {
-			return alien.position.y > Constant::Window::Height - player.player_base_height;
-			})) {
-			End();
-		}
-
-		//End game if player dies
-		if (player.lives < 1)
-		{
-			End();
-		}
+		handleLoseConditions();
 
 		//Spawn new aliens if aliens run out
 		if (Aliens.size() < 1)
@@ -267,6 +257,20 @@ void Game::Update()
 	default:
 		//SHOULD NOT HAPPEN
 		break;
+	}
+}
+
+void Game::handleLoseConditions()
+{
+	if (std::ranges::any_of(Aliens, [&](const Alien& alien) {
+		return alien.position.y > Constant::Window::Height - player.player_base_height;
+		})) {
+		End();
+	}
+
+	if (player.lives < 1)
+	{
+		End(); // TODO: do not bother with rest of update after end()
 	}
 }
 
