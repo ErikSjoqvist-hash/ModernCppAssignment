@@ -70,6 +70,7 @@ int main(void)
         //{
         //    StopSound(sound);
         //}
+        game.HandleInput();
 
         game.Update();
 

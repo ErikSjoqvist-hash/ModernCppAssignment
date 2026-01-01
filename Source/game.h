@@ -153,6 +153,8 @@ struct Game
 	void Continue();
 	void Launch();
 
+	void HandleInput();
+
 	void Update();
 	void EraseInactiveEntities();
 	void HandleLoseConditions();

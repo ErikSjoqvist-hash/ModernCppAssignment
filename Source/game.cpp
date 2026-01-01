@@ -72,12 +72,8 @@ void Game::Launch()
 	resources.Load();
 }
 
-void Game::Update()
-{//TODO: nesting
-	//TODO: comments
-	//TODO: raw for
-	//TODO: magic numbers
-	//TODO: long function
+void Game::HandleInput()
+{
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
@@ -91,47 +87,13 @@ void Game::Update()
 
 		break;
 	case State::GAMEPLAY:
-		//Code
 		if (IsKeyReleased(KEY_Q))
 		{
 			End();
 		}
 
-		player.Update();
-
-		
-		std::ranges::for_each(Aliens, [&](Alien& alien) {
-			alien.Update();
-			});
-
-		HandleLoseConditions();
-
-		//Spawn new aliens if aliens run out
-		if (Aliens.size() < 1)
-		{
-			SpawnAliens();
-		}
 
 
-		// Update background with offset
-		// TODO: improve
-		playerPos = { player.x_pos, (float)player.player_base_height };
-		cornerPos = { 0, (float)player.player_base_height };
-		offset = lineLength(playerPos, cornerPos) * -1;
-		background.Update(offset / 15);
-
-
-		std::ranges::for_each(Projectiles, [&](Projectile& projectile) { //TODO: inconsisten ampersand placement
-			projectile.Update();
-			});
-
-		std::ranges::for_each(Walls, [&](Wall& wall) {
-			wall.Update();
-			});
-
-		Collision();
-
-		//MAKE PROJECTILE
 		if (IsKeyPressed(KEY_SPACE))
 		{
 			Projectile newProjectile;
@@ -141,30 +103,7 @@ void Game::Update()
 			Projectiles.push_back(newProjectile);
 		}
 
-		//Aliens Shooting
-		shootTimer += 1;
-		if (shootTimer > 59) //once per second
-		{
-			int randomAlienIndex = 0;
-
-			if (Aliens.size() > 1)
-			{
-				randomAlienIndex = rand() % Aliens.size();
-			}
-
-			Projectile newProjectile;
-			newProjectile.position = Aliens[randomAlienIndex].position;
-			newProjectile.position.y += 40;
-			newProjectile.speed = -15;
-			newProjectile.type = EntityType::ENEMY_PROJECTILE;
-			Projectiles.push_back(newProjectile);
-			shootTimer = 0;
-		}
-
-
-		EraseInactiveEntities();
-
-
+		
 
 
 		break;
@@ -172,10 +111,10 @@ void Game::Update()
 		//Code
 
 		//Exit endscreen
-		if (IsKeyReleased(KEY_ENTER) && !newHighScore)
-		{
-			Continue();
-		}
+	if (IsKeyReleased(KEY_ENTER) && !newHighScore)
+	{
+		Continue();
+	}
 
 
 
@@ -240,6 +179,95 @@ void Game::Update()
 		}
 
 
+
+		break;
+	default:
+		//SHOULD NOT HAPPEN
+		break;
+	}
+}
+
+void Game::Update()
+{//TODO: nesting
+	//TODO: comments
+	//TODO: raw for
+	//TODO: magic numbers
+	//TODO: long function
+	switch (gameState)
+	{
+	case State::STARTSCREEN:
+		//Code 
+		
+
+		break;
+	case State::GAMEPLAY:
+		
+
+		player.Update();
+
+		
+		std::ranges::for_each(Aliens, [&](Alien& alien) {
+			alien.Update();
+			});
+
+		HandleLoseConditions();
+
+		//Spawn new aliens if aliens run out
+		if (Aliens.size() < 1)
+		{
+			SpawnAliens();
+		}
+
+
+		// Update background with offset
+		// TODO: improve
+		playerPos = { player.x_pos, (float)player.player_base_height };
+		cornerPos = { 0, (float)player.player_base_height };
+		offset = lineLength(playerPos, cornerPos) * -1;
+		background.Update(offset / 15);
+
+
+		std::ranges::for_each(Projectiles, [&](Projectile& projectile) { //TODO: inconsisten ampersand placement
+			projectile.Update();
+			});
+
+		std::ranges::for_each(Walls, [&](Wall& wall) {
+			wall.Update();
+			});
+
+		Collision();
+
+		//MAKE PROJECTILE
+	
+
+		shootTimer += 1;
+		if (shootTimer > 59) //once per second
+		{
+			int randomAlienIndex = 0;
+
+			if (Aliens.size() > 1)
+			{
+				randomAlienIndex = rand() % Aliens.size();
+			}
+
+			Projectile newProjectile;
+			newProjectile.position = Aliens[randomAlienIndex].position;
+			newProjectile.position.y += 40;
+			newProjectile.speed = -15;
+			newProjectile.type = EntityType::ENEMY_PROJECTILE;
+			Projectiles.push_back(newProjectile);
+			shootTimer = 0;
+		}
+
+
+		EraseInactiveEntities();
+
+
+
+
+		break;
+	case State::ENDSCREEN:
+		
 
 		break;
 	default:
