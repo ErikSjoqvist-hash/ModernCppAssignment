@@ -133,14 +133,14 @@ void Game::Update()
 
 
 		//UPDATE PROJECTILE
-		for (int i = 0; i < Projectiles.size(); i++)
+		for (Projectile projectile : Projectiles)
 		{
-			Projectiles[i].Update();
+			projectile.Update();
 		}
 		//UPDATE PROJECTILE
-		for (int i = 0; i < Walls.size(); i++)
+		for (Wall wall : Walls)
 		{
-			Walls[i].Update();
+			wall.Update();
 		}
 
 		//CHECK ALL COLLISONS HERE
