@@ -25,18 +25,13 @@
 #include "game.h"
 #include "Constants.h"
 
-//------------------------------------------------------------------------------------
-// Program main entry point
-//------------------------------------------------------------------------------------
 int main(void)
 {
-    // Initialization
-    //--------------------------------------------------------------------------------------
     
 
     InitWindow(Constant::Window::Width, Constant::Window::Height, "SPACE INVADERS");
 
-    SetTargetFPS(Constant::Window::fps);               // Set our game to run at 60 frames-per-second
+    SetTargetFPS(Constant::Window::fps);
 
     Game game = { State::STARTSCREEN };
     Resources resources;
@@ -44,39 +39,20 @@ int main(void)
     game.Launch();
 
 
-    //--------------------------------------------------------------------------------------
-
     InitAudioDevice();
 
     auto sound = LoadSound("./hitHurt.ogg");
 
 
-    //TODO: comments
-
-    // Main game loop
-    while (!WindowShouldClose())    // Detect window close button or ESC key
+   
+    while (!WindowShouldClose())   
     {
-        // Update
-        //----------------------------------------------------------------------------------
-        // TODO: Update your variables here
-        //----------------------------------------------------------------------------------
-
-        //if (IsKeyPressed(KEY_SPACE))
-        //{
-        //    PlaySound(sound);
-        //}
-
-        //if (IsKeyPressed(KEY_BACKSPACE))
-        //{
-        //    StopSound(sound);
-        //}
+        
         game.HandleInput();
 
         game.Update();
 
 
-        // Draw
-        //----------------------------------------------------------------------------------
         BeginDrawing();
 
         ClearBackground(BLACK);
@@ -86,15 +62,11 @@ int main(void)
         game.Render();
 
         EndDrawing();
-        //----------------------------------------------------------------------------------
     }
 
     CloseAudioDevice();
 
-    // De-Initialization
-    //--------------------------------------------------------------------------------------
-    CloseWindow();        // Close window and OpenGL context
-    //--------------------------------------------------------------------------------------
+    CloseWindow();
 
     std::string filename = "level.txt";  //Todo: unused
 

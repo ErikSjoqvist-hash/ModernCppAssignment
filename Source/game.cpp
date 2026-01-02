@@ -7,16 +7,13 @@
 #include <fstream>
 #include <algorithm>
 
-//TODO: comments
-// MATH FUNCTIONS
-float lineLength(Vector2 A, Vector2 B) //Uses pythagoras to calculate the length of a line
+float lineLength(Vector2 A, Vector2 B) 
 {
 	const float length = sqrtf(pow(B.x - A.x, 2) + pow(B.y - A.y, 2));
 
 	return length;
 }
-//TODO: comments
-bool pointInCircle(Vector2 circlePos, float radius, Vector2 point) // Uses pythagoras to calculate if a point is within a circle or not
+bool pointInCircle(Vector2 circlePos, float radius, Vector2 point) 
 { //TODO: unecesary if
 	const float distanceToCentre = lineLength(circlePos, point);
 
@@ -77,7 +74,6 @@ void Game::HandleInput()
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
-		//Code 
 		if (IsKeyReleased(KEY_SPACE))
 		{
 			Start();
@@ -108,9 +104,6 @@ void Game::HandleInput()
 
 		break;
 	case State::ENDSCREEN:
-		//Code
-
-		//Exit endscreen
 		if (IsKeyReleased(KEY_ENTER) && !newHighScore)
 		{
 			Continue();
@@ -164,8 +157,6 @@ void Game::HandleInput()
 				framesCounter = 0;
 			}
 
-			// If the name is right legth and enter is pressed, exit screen by setting highscore to false and add 
-			// name + score to scoreboard
 			if (letterCount > 0 && letterCount < 9 && IsKeyReleased(KEY_ENTER))
 			{
 				std::string nameEntry(name);
@@ -188,7 +179,6 @@ void Game::HandleInput()
 
 void Game::Update()
 {//TODO: nesting
-	//TODO: comments
 	//TODO: magic numbers
 	//TODO: long function
 	switch (gameState)
@@ -213,7 +203,6 @@ void Game::Update()
 
 
 
-		// Update background with offset
 		// TODO: improve
 		playerPos = { player.x_pos, player.player_base_height };
 		cornerPos = { 0, player.player_base_height };
@@ -253,7 +242,6 @@ void Game::Update()
 
 		break;
 	default:
-		//SHOULD NOT HAPPEN
 		break;
 	}
 }
@@ -324,8 +312,6 @@ void Game::Collision()// TODO: improve name
 			{
 				if (CheckCollision(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 				{
-					// Kill!
-					// Set them as inactive, will be killed later
 					Projectiles[i].active = false;
 					Aliens[a].active = false;
 					score += 100;
@@ -333,7 +319,6 @@ void Game::Collision()// TODO: improve name
 			}
 		}
 
-		//ENEMY PROJECTILES HERE
 
 		if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
 		{
@@ -350,8 +335,6 @@ void Game::Collision()// TODO: improve name
 		{
 			if (CheckCollision(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 			{
-				// Kill!
-				// Set them as inactive, will be killed later
 				Projectiles[i].active = false;
 				Walls[b].health -= 1;
 			}
@@ -369,7 +352,6 @@ void Game::Render()
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
-		//Code
 		DrawText("SPACE INVADERS", 200, 100, Constant::UI::FontSize::VeryLarge, YELLOW);
 
 		DrawText("PRESS SPACE TO BEGIN", 200, 350, Constant::UI::FontSize::Medium, YELLOW);
@@ -377,13 +359,11 @@ void Game::Render()
 
 		break;
 	case State::GAMEPLAY:
-		//Code
 
 
 		//background render LEAVE THIS AT TOP
 		background.Render(); // TODO: render layers
 
-		//DrawText("GAMEPLAY", 50, 30, 40, YELLOW);
 		DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
 		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
 
@@ -406,8 +386,6 @@ void Game::Render()
 
 		break;
 	case State::ENDSCREEN:
-		//Code
-		//DrawText("END", 50, 50, 40, YELLOW);
 
 
 
@@ -421,13 +399,11 @@ void Game::Render()
 
 
 
-			// BELOW CODE IS FOR NAME INPUT RENDER
 			DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, Constant::UI::FontSize::Small, YELLOW);
 
 			DrawRectangleRec(Constant::UI::textBox, LIGHTGRAY);
 			if (mouseOnText)
 			{
-				// HOVER CONFIRMIATION
 				DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, RED);
 			}
 			else
@@ -435,17 +411,14 @@ void Game::Render()
 				DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
 			}
 
-			//Draw the name being typed out
 			DrawText(name, (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON);
 
-			//Draw the text explaining how many characters are used
 			DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, Constant::UI::FontSize::Small, YELLOW);
 
 			if (mouseOnText)
 			{
 				if (letterCount < 9)
 				{
-					// Draw blinking underscore char
 					if (((framesCounter / 20) % 2) == 0)
 					{
 						DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name, 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON);
@@ -454,13 +427,11 @@ void Game::Render()
 				}
 				else
 				{
-					//Name needs to be shorter
 					DrawText("Press BACKSPACE to delete chars...", 600, 650, Constant::UI::FontSize::Small, YELLOW);
 				}
 
 			}
 
-			// Explain how to continue when name is input
 			if (letterCount > 0 && letterCount < 9)
 			{
 				DrawText("PRESS ENTER TO CONTINUE", 600, 800, Constant::UI::FontSize::Medium, YELLOW);
@@ -468,7 +439,6 @@ void Game::Render()
 
 		}
 		else {
-			// If no highscore or name is entered, show scoreboard and call it a day
 			DrawText("PRESS ENTER TO CONTINUE", 600, 200, Constant::UI::FontSize::Medium, YELLOW);
 
 			DrawText("LEADERBOARD", 50, 100, Constant::UI::FontSize::Medium, YELLOW);
@@ -486,7 +456,6 @@ void Game::Render()
 
 		break;
 	default:
-		//SHOULD NOT HAPPEN
 		break;
 	}
 }
@@ -636,9 +605,8 @@ void Player::Initialize()
 void Player::Update()
 {//TODO: magic numbers
 
-	//Movement
 	direction = 0;
-	if (IsKeyDown(KEY_LEFT))
+	if (IsKeyDown(KEY_LEFT)) //TODO: put in input handler
 	{
 		direction--;
 	}
@@ -659,7 +627,6 @@ void Player::Update()
 	}
 
 
-	//Determine frame for animation
 	timer += GetFrameTime();
 
 	if (timer > 0.4 && activeTexture == 2)
@@ -701,7 +668,6 @@ void Projectile::Update()
 {//TODO: magic numbers
 	position.y -= speed;
 
-	// UPDATE LINE POSITION
 	lineStart.y = position.y - 15;
 	lineEnd.y = position.y + 15;
 
@@ -716,7 +682,6 @@ void Projectile::Update()
 
 void Projectile::Render(Texture2D texture)
 {//TODO: magic numbers
-	//DrawCircle((int)position.x, (int)position.y, 10, RED);
 	DrawTexturePro(texture,
 		{
 			0,
@@ -735,9 +700,8 @@ void Projectile::Render(Texture2D texture)
 }
 
 void Wall::Update()
-{//TODO: comments
+{
 
-	// set walls as inactive when out of health
 	if (health < 1)
 	{
 		active = false;
@@ -796,8 +760,6 @@ void Alien::Update()
 
 void Alien::Render(Texture2D texture)
 {//TODO: magic numbers
-	//DrawRectangle((int)position.x - 25, (int)position.y, 30, 30, RED);
-	//DrawCircle((int)position.x, (int)position.y, radius, GREEN);
 
 
 
@@ -870,60 +832,4 @@ void Background::Render()
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/*LEGACY CODE
-	// our objective is to calculate the distance between the closest point of the line to the centre of the circle,
-	// and determine if it is shorter than the radius.
-
-	// we can imagine the edges of the line and circle centre to form a triangle. calculating the height of the
-	// triangle will give us the distance, if the line serves as the base
-
-	// simplify variables
-	Vector2 A = lineStart;
-	Vector2 B = lineEnd;
-	Vector2 C = circlePos;
-
-	// calculate area using determinant method
-
-	float triangle_area = fabsf(A.x * (B.y - C.y) + B.x * (C.y - A.y) + C.x * (A.y - B.y)) / 2;
-
-
-	// Caculate vectors AB to calculate base length
-	Vector2 AB;
-	AB.x = B.x - A.x;
-	AB.y = B.y - A.y;
-
-	//get the base length
-	float trangle_base_length = (float)sqrt(pow(AB.x, 2) + pow(AB.y, 2));
-
-	// we double the area to turn in into a rectangle, and then divide the base length to get the height.
-	float triangle_height = (triangle_area * 2 ) / trangle_base_length;
-
-	std::cout << triangle_area << "\n";
-
-	if (triangle_height < circleRadius)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-
-
-	*/
 

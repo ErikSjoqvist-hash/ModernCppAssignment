@@ -3,10 +3,9 @@
 #include "vector"
 
 struct Resources
-{ //TODO: comments
+{ 
 	//TODO: RAII?
 	void Load();
-	//void Unload();
 
 	std::vector<Texture2D> shipTextures;
 	Texture2D alienTexture;

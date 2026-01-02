@@ -10,11 +10,4 @@ void Resources::Load()
 	shipTextures.push_back(LoadTexture("./Assets/Ship2.png"));
 	shipTextures.push_back(LoadTexture("./Assets/Ship3.png"));
 	laserTexture = LoadTexture("./Assets/Laser.png");
-}//Todo: comments
-/*
-void Resources::Unload()
-{
-	UnloadTexture(barrierTexture);
-	UnloadTexture(alienTexture);
 }
-*/
