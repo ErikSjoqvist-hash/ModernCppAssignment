@@ -173,7 +173,6 @@ struct Game
 
 	void InsertNewHighScore(std::string name);
 
-	void SaveLeaderboard();
 
 
 	// Entity Storage and Resources
