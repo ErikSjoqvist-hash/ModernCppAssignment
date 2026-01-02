@@ -36,12 +36,13 @@ void Game::Start()
 
 	SpawnWalls();
 
+
 	const Player newPlayer;// TODO: make reset player function
 	player = newPlayer;
 	player.Initialize();
 
-	SpawnAliens();
 
+	SpawnAliens();
 
 	background.Initialize(Constant::starCount);
 
@@ -189,20 +190,18 @@ void Game::HandleInput()
 void Game::Update()
 {//TODO: nesting
 	//TODO: comments
-	//TODO: raw for
 	//TODO: magic numbers
 	//TODO: long function
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
-		//Code 
 
 
 		break;
 	case State::GAMEPLAY:
 
 
-		UpdatePlayer();
+		player.Update();
 
 
 		UpdateProjectiles();
@@ -225,11 +224,10 @@ void Game::Update()
 
 		Collision();
 
-		//MAKE PROJECTILE
 
 
 		shootTimer += 1;
-		if (shootTimer > 59) //once per second
+		if (shootTimer > 59)
 		{
 			int randomAlienIndex = 0;
 
@@ -261,10 +259,6 @@ void Game::Update()
 	}
 }
 
-void Game::UpdatePlayer()
-{
-	player.Update();
-}
 
 void Game::UpdateProjectiles()
 {
@@ -322,7 +316,7 @@ void Game::HandleLoseConditions()
 }
 
 void Game::Collision()// TODO: improve name
-{
+{// TODO: nesting
 	for (int i = 0; i < Projectiles.size(); i++)
 	{
 		if (Projectiles[i].type == EntityType::PLAYER_PROJECTILE)
@@ -391,7 +385,7 @@ void Game::Render()
 
 
 		//background render LEAVE THIS AT TOP
-		background.Render();
+		background.Render(); // TODO: render layers
 
 		//DrawText("GAMEPLAY", 50, 30, 40, YELLOW);
 		DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
@@ -504,7 +498,7 @@ void Game::Render()
 void Game::SpawnWalls()
 {
 	constexpr int gapCount{ Constant::Wall::amount + 1 };
-	float wall_distance = Constant::Window::Width / (gapCount);
+	float wall_distance = Constant::Window::Width / gapCount;
 
 	Walls.resize(Constant::Wall::amount);
 	int iterator = 1;
@@ -521,6 +515,7 @@ void Game::SpawnWalls()
 void Game::SpawnAliens()
 {//TODO: raw for
 	//TODO: nesting
+	//TODO: object pool
 	for (int row = 0; row < Constant::EnemyFormation::Height; row++) {
 		for (int col = 0; col < Constant::EnemyFormation::Width; col++) {
 			Alien newAlien = Alien();
@@ -576,6 +571,7 @@ void Game::SaveLeaderboard()
 	// OPEN FILE
 	std::fstream file;
 
+	// TODO: Leaderboard does not exist
 	file.open("Leaderboard");
 
 	if (!file)
@@ -771,6 +767,18 @@ void Projectile::Render(Texture2D texture)
 		WHITE);
 }
 
+void Wall::Update()
+{//TODO: comments
+
+	// set walls as inactive when out of health
+	if (health < 1)
+	{
+		active = false;
+	}
+
+
+}
+
 void Wall::Render(Texture2D texture)
 {//TODO: magic numbers
 	DrawTexturePro(texture,
@@ -791,18 +799,6 @@ void Wall::Render(Texture2D texture)
 
 
 	DrawText(TextFormat("%i", health), position.x - 21, position.y + 10, Constant::UI::FontSize::Medium, RED);
-
-}
-
-void Wall::Update()
-{//TODO: comments
-
-	// set walls as inactive when out of health
-	if (health < 1)
-	{
-		active = false;
-	}
-
 
 }
 
@@ -855,8 +851,6 @@ void Alien::Render(Texture2D texture)
 		WHITE);
 }
 
-
-//BACKGROUND
 void Star::Update(float starOffset)
 {
 	position.x = initPosition.x + starOffset;
