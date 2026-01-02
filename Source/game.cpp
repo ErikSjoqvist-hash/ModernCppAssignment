@@ -325,7 +325,6 @@ void Game::Collision()// TODO: improve name
 				if (CheckCollision(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 				{
 					// Kill!
-					std::cout << "Hit! \n";
 					// Set them as inactive, will be killed later
 					Projectiles[i].active = false;
 					Aliens[a].active = false;
@@ -340,7 +339,6 @@ void Game::Collision()// TODO: improve name
 		{
 			if (CheckCollision({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 			{
-				std::cout << "dead!\n";
 				Projectiles[i].active = false;
 				player.lives -= 1;
 			}
@@ -353,7 +351,6 @@ void Game::Collision()// TODO: improve name
 			if (CheckCollision(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 			{
 				// Kill!
-				std::cout << "Hit! \n";
 				// Set them as inactive, will be killed later
 				Projectiles[i].active = false;
 				Walls[b].health -= 1;
@@ -522,8 +519,6 @@ void Game::SpawnAliens()
 			newAlien.position.x = Constant::EnemyFormation::YCord + 450 + (col * Constant::EnemyFormation::Spacing);
 			newAlien.position.y = Constant::EnemyFormation::YCord + (row * Constant::EnemyFormation::Spacing);
 			Aliens.push_back(newAlien);
-			std::cout << "Find Alien -X:" << newAlien.position.x << std::endl;
-			std::cout << "Find Alien -Y:" << newAlien.position.y << std::endl;
 		}
 	}
 
@@ -632,10 +627,9 @@ bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineSta
 }
 
 void Player::Initialize()
-{//TODO: cout
+{
 
 	x_pos = Constant::Window::Width / 2;
-	std::cout << "Find Player -X:" << Constant::Window::Width / 2 << "Find Player -Y" << Constant::Window::Height - player_base_height << std::endl;
 
 }
 

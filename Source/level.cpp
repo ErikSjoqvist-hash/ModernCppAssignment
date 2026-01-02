@@ -27,7 +27,6 @@ void LoadLevelFromFile(const std::string& filename)
 		for (int i = 0; i < entities.size(); i++)
 		{
 			const Entity& entity = entities[i];
-			std::cout << "Spawn entity at X:" << entity.x << ",Y:" << entity.y << std::endl;
 		}
 	}
 	else
