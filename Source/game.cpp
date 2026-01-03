@@ -14,7 +14,7 @@ float lineLength(Vector2 A, Vector2 B)
 	return length;
 }
 bool pointInCircle(Vector2 circlePos, float radius, Vector2 point) 
-{ //TODO: unecesary if
+{
 	const float distanceToCentre = lineLength(circlePos, point);
 
 	if (distanceToCentre < radius)
@@ -310,7 +310,7 @@ void Game::Collision()// TODO: improve name
 		{
 			for (int a = 0; a < Aliens.size(); a++)
 			{
-				if (CheckCollision(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+				if (CheckCollisionCircleLine(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 				{
 					Projectiles[i].active = false;
 					Aliens[a].active = false;
@@ -322,7 +322,7 @@ void Game::Collision()// TODO: improve name
 
 		if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
 		{
-			if (CheckCollision({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+			if (CheckCollisionCircleLine({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 			{
 				Projectiles[i].active = false;
 				player.lives -= 1;
@@ -333,7 +333,7 @@ void Game::Collision()// TODO: improve name
 
 		for (int b = 0; b < Walls.size(); b++)
 		{
-			if (CheckCollision(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+			if (CheckCollisionCircleLine(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
 			{
 				Projectiles[i].active = false;
 				Walls[b].health -= 1;
@@ -347,7 +347,6 @@ void Game::Render()
 {//TODO: comments
 	//TODO: magic numbers
 	//TODO: nesting
-	//TODO: raw for
 	//TODO: long function
 	switch (gameState)
 	{
@@ -395,6 +394,9 @@ void Game::Render()
 
 		if (newHighScore)
 		{ //TODO: magic numbers
+			//TODO: long function
+			//TODO: casts
+			//TODO: nesting
 			DrawText("NEW HIGHSCORE!", 600, 300, Constant::UI::FontSize::Large, YELLOW);
 
 
@@ -463,18 +465,17 @@ void Game::Render()
 void Game::SpawnWalls()
 {
 	constexpr int gapCount{ Constant::Wall::amount + 1 };
-	float wall_distance = Constant::Window::Width / gapCount;
+	int wall_distance = Constant::Window::Width / gapCount;
 
 	Walls.resize(Constant::Wall::amount);
 	int iterator = 1;
-	std::ranges::generate(Walls, [&]
-		{
-			Wall wall;
-			wall.position.y = Constant::Window::Height - Constant::Wall::positionOffset;
-			wall.position.x = wall_distance * iterator++;
-			return wall;
-		});
-
+	for (std::size_t i = 0; i < Walls.size(); ++i) //TODO: temporary raw for as generate was not working
+	{
+		Wall wall;
+		wall.position.y = Constant::Window::Height - Constant::Wall::positionOffset;
+		wall.position.x = wall_distance * iterator++;
+		Walls[i] = std::move(wall);
+	}
 }
 
 void Game::SpawnAliens()
@@ -523,76 +524,6 @@ void Game::InsertNewHighScore(std::string name)
 
 		}
 	}
-}
-
-
-
-
-bool Game::CheckCollision(Vector2 circlePos, float circleRadius, Vector2 lineStart, Vector2 lineEnd)
-{//TODO: comments
-	//TODO: nesting
-	//TODO: long function
-	// our objective is to calculate the distance between the closest point on the line to the centre of the circle, 
-	// and determine if it is shorter than the radius.
-
-	// check if either edge of line is within circle
-	if (pointInCircle(circlePos, circleRadius, lineStart) || pointInCircle(circlePos, circleRadius, lineEnd))
-	{
-		return true;
-	}
-
-	// simplify variables
-	const Vector2 A = lineStart;
-	const Vector2 B = lineEnd;
-	const Vector2 C = circlePos;
-
-	// calculate the length of the line
-	const float length = lineLength(A, B);
-
-	// calculate the dot product
-	const float dotP = (((C.x - A.x) * (B.x - A.x)) + ((C.y - A.y) * (B.y - A.y))) / pow(length, 2);
-
-	// use dot product to find closest point
-	const float closestX = A.x + (dotP * (B.x - A.x));
-	const float closestY = A.y + (dotP * (B.y - A.y));
-
-	//find out if coordinates are on the line.
-	// we do this by comparing the distance of the dot to the edges, with two vectors
-	// if the distance of the vectors combined is the same as the length the point is on the line
-
-	//since we are using floating points, we will allow the distance to be slightly innaccurate to create a smoother collision
-	const float buffer = 0.1;
-
-	const float closeToStart = lineLength(A, { closestX, closestY }); //closestX + Y compared to line Start
-	const float closeToEnd = lineLength(B, { closestX, closestY });	//closestX + Y compared to line End
-
-	const float closestLength = closeToStart + closeToEnd;
-
-	if (closestLength == length + buffer || closestLength == length - buffer)
-	{
-		//Point is on the line!
-
-		//Compare length between closest point and circle centre with circle radius
-
-		const float closeToCentre = lineLength(A, { closestX, closestY }); //closestX + Y compared to circle centre
-
-		if (closeToCentre < circleRadius)
-		{
-			//Line is colliding with circle!
-			return true;
-		}
-		else
-		{
-			//Line is not colliding
-			return false;
-		}
-	}
-	else
-	{
-		// Point is not on the line, line is not colliding
-		return false;
-	}
-
 }
 
 void Player::Initialize()
