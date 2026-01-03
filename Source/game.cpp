@@ -56,6 +56,7 @@ void Game::Launch()
 	resources.Load();
 }
 
+
 void Game::HandleInput()
 {
 	switch (gameState)
@@ -259,6 +260,7 @@ void Game::UpdateAliens()
 	}
 }
 
+
 void Game::EraseInactiveEntities()
 {
 	std::erase_if(Projectiles, [&](const Projectile projectile)
@@ -288,6 +290,7 @@ void Game::HandleLoseConditions()
 		End(); // TODO: do not bother with rest of update after end()
 	}
 }
+
 
 void Game::Collision()// TODO: improve name
 {// TODO: nesting
@@ -331,123 +334,132 @@ void Game::Collision()// TODO: improve name
 
 
 void Game::Render()
-{//TODO: comments
-	//TODO: magic numbers
-	//TODO: nesting
-	//TODO: long function
+{
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
-		DrawText("SPACE INVADERS", 200, 100, Constant::UI::FontSize::VeryLarge, YELLOW);
 
-		DrawText("PRESS SPACE TO BEGIN", 200, 350, Constant::UI::FontSize::Medium, YELLOW);
-
+		RenderStartScreen();
 
 		break;
 	case State::GAMEPLAY:
 
-
-		//background render LEAVE THIS AT TOP
-		background.Render(); // TODO: render layers
-
-		DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
-		DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
-
-
-		player.Render(resources.shipTextures[player.activeTexture]);
-
-		std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
-			projectile.Render(resources.laserTexture);
-			});
-
-		std::ranges::for_each(Walls, [&](Wall& wall) {
-			wall.Render(resources.barrierTexture);
-			});
-
-		std::ranges::for_each(Aliens, [&](Alien& alien) {
-			alien.Render(resources.alienTexture);
-			});
-
-
+		RenderGameplay();
 
 		break;
 	case State::ENDSCREEN:
 
-
-
-
-
-
-
 		if (newHighScore)
-		{ //TODO: magic numbers
-			//TODO: long function
-			//TODO: casts
-			//TODO: nesting
-			DrawText("NEW HIGHSCORE!", 600, 300, Constant::UI::FontSize::Large, YELLOW);
-
-
-
-			DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, Constant::UI::FontSize::Small, YELLOW);
-
-			DrawRectangleRec(Constant::UI::textBox, LIGHTGRAY);
-			if (mouseOnText)
-			{
-				DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, RED);
-			}
-			else
-			{
-				DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
-			}
-
-			DrawText(name, (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON);
-
-			DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, Constant::UI::FontSize::Small, YELLOW);
-
-			if (mouseOnText)
-			{
-				if (letterCount < 9)
-				{
-					if (((framesCounter / 20) % 2) == 0)
-					{
-						DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name, 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON);
-					}
-
-				}
-				else
-				{
-					DrawText("Press BACKSPACE to delete chars...", 600, 650, Constant::UI::FontSize::Small, YELLOW);
-				}
-
-			}
-
-			if (letterCount > 0 && letterCount < 9)
-			{
-				DrawText("PRESS ENTER TO CONTINUE", 600, 800, Constant::UI::FontSize::Medium, YELLOW);
-			}
+		{
+			RenderNameInputMenu();
 
 		}
 		else {
-			DrawText("PRESS ENTER TO CONTINUE", 600, 200, Constant::UI::FontSize::Medium, YELLOW);
-
-			DrawText("LEADERBOARD", 50, 100, Constant::UI::FontSize::Medium, YELLOW);
-
-			for (int i = 0; i < Leaderboard.size(); i++)
-			{
-				const char* tempNameDisplay = Leaderboard[i].name.data();
-				DrawText(tempNameDisplay, 50, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
-				DrawText(TextFormat("%i", Leaderboard[i].score), 350, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
-			}
+			RenderLeaderboardMenu();
 		}
-
-
-
 
 		break;
 	default:
 		break;
 	}
 }
+
+void Game::RenderLeaderboardMenu()
+{
+	//TODO: magic numbers
+	//TODO: Raw for
+	DrawText("PRESS ENTER TO CONTINUE", 600, 200, Constant::UI::FontSize::Medium, YELLOW);
+
+	DrawText("LEADERBOARD", 50, 100, Constant::UI::FontSize::Medium, YELLOW);
+
+	for (int i = 0; i < Leaderboard.size(); i++)
+	{
+		const char* tempNameDisplay = Leaderboard[i].name.data();
+		DrawText(tempNameDisplay, 50, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
+		DrawText(TextFormat("%i", Leaderboard[i].score), 350, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
+	}
+}
+
+void Game::RenderNameInputMenu()
+{
+	//TODO: magic numbers
+	//TODO: long function
+	//TODO: casts
+	//TODO: nesting
+	DrawText("NEW HIGHSCORE!", 600, 300, Constant::UI::FontSize::Large, YELLOW);
+
+
+
+	DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, Constant::UI::FontSize::Small, YELLOW);
+
+	DrawRectangleRec(Constant::UI::textBox, LIGHTGRAY);
+	if (mouseOnText)
+	{
+		DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, RED);
+	}
+	else
+	{
+		DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
+	}
+
+	DrawText(name, (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON);
+
+	DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, Constant::UI::FontSize::Small, YELLOW);
+
+	if (mouseOnText)
+	{
+		if (letterCount < 9)
+		{
+			if (((framesCounter / 20) % 2) == 0)
+			{
+				DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name, 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON);
+			}
+
+		}
+		else
+		{
+			DrawText("Press BACKSPACE to delete chars...", 600, 650, Constant::UI::FontSize::Small, YELLOW);
+		}
+
+	}
+
+	if (letterCount > 0 && letterCount < 9)
+	{
+		DrawText("PRESS ENTER TO CONTINUE", 600, 800, Constant::UI::FontSize::Medium, YELLOW);
+	}
+}
+
+void Game::RenderGameplay()
+{
+	//background render LEAVE THIS AT TOP
+	background.Render(); // TODO: render layers
+
+	DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
+	DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
+
+
+	player.Render(resources.shipTextures[player.activeTexture]);
+
+	std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
+		projectile.Render(resources.laserTexture);
+		});
+
+	std::ranges::for_each(Walls, [&](Wall& wall) {
+		wall.Render(resources.barrierTexture);
+		});
+
+	std::ranges::for_each(Aliens, [&](Alien& alien) {
+		alien.Render(resources.alienTexture);
+		});
+}
+
+void Game::RenderStartScreen()
+{
+	DrawText("SPACE INVADERS", 200, 100, Constant::UI::FontSize::VeryLarge, YELLOW);
+
+	DrawText("PRESS SPACE TO BEGIN", 200, 350, Constant::UI::FontSize::Medium, YELLOW);
+}
+
 
 void Game::SpawnWalls()
 {
@@ -481,8 +493,9 @@ void Game::SpawnAliens()
 
 }
 
+
 bool Game::CheckNewHighScore()
-{//TODO: unecesary if
+{//TODO: does not need to be a function
 	if (score > Leaderboard[4].score)
 	{
 		return true;
@@ -512,6 +525,7 @@ void Game::InsertNewHighScore(std::string name)
 		}
 	}
 }
+
 
 void Player::Initialize()
 {
@@ -581,7 +595,6 @@ void Player::Render(Texture2D texture)
 }
 
 
-
 void Projectile::Update()
 {//TODO: magic numbers
 	position.y -= speed;
@@ -617,6 +630,7 @@ void Projectile::Render(Texture2D texture)
 		WHITE);
 }
 
+
 void Wall::Update()
 {
 
@@ -650,6 +664,7 @@ void Wall::Render(Texture2D texture)
 	DrawText(TextFormat("%i", health), position.x - 21, position.y + 10, Constant::UI::FontSize::Medium, RED);
 
 }
+
 
 void Alien::Update()
 {//TODO: nesting
@@ -697,6 +712,7 @@ void Alien::Render(Texture2D texture)
 		0,
 		WHITE);
 }
+
 
 void Star::Update(float starOffset)
 {
@@ -748,6 +764,3 @@ void Background::Render()
 		Stars[i].Render();
 	}
 }
-
-
-

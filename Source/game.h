@@ -164,6 +164,14 @@ struct Game
 	void Collision();
 	void Render();
 
+	void RenderLeaderboardMenu();
+
+	void RenderNameInputMenu();
+
+	void RenderGameplay();
+
+	void RenderStartScreen();
+
 	void SpawnWalls();
 	void SpawnAliens();
 
