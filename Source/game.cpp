@@ -13,19 +13,6 @@ float lineLength(Vector2 A, Vector2 B)
 
 	return length;
 }
-bool pointInCircle(Vector2 circlePos, float radius, Vector2 point) 
-{
-	const float distanceToCentre = lineLength(circlePos, point);
-
-	if (distanceToCentre < radius)
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
-}
 
 
 void Game::Start()
