@@ -10,7 +10,6 @@ namespace Constant
 
 	constexpr int starCount{ 600 };
 
-
 	namespace Window
 	{
 		constexpr int Width = 1920;
@@ -40,7 +39,4 @@ namespace Constant
 			constexpr int VeryLarge{ 160 };
 		}
 	}
-
-
-
 }

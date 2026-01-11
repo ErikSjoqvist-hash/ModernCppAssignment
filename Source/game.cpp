@@ -209,7 +209,7 @@ void Game::Update()
 
 			if (Aliens.size() > 1)
 			{
-				randomAlienIndex = rand() % Aliens.size();
+				randomAlienIndex = GetRandomValue(0, 100) % Aliens.size();
 			}
 
 			Projectile newProjectile;
@@ -263,11 +263,11 @@ void Game::UpdateAliens()
 
 void Game::EraseInactiveEntities()
 {
-	std::erase_if(Projectiles, [&](const Projectile projectile)
+	std::erase_if(Projectiles, [&](const Projectile& projectile)
 		{
 			return !projectile.active;
 		});
-	std::erase_if(Aliens, [&](const Alien alien)
+	std::erase_if(Aliens, [&](const Alien& alien)
 		{
 			return !alien.active;
 		});
