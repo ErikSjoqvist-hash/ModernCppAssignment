@@ -1,15 +1,15 @@
 #pragma once
-#include "raylib.h"
-#include "vector"
+#include <vector>
+#include "TextureManager.h"
 
-struct Resources
+class Resources
 { 
-	//TODO: RAII?
-	void Load();
+public:
+	Resources();
 
-	std::vector<Texture2D> shipTextures;
-	Texture2D alienTexture;
-	Texture2D barrierTexture;
-	Texture2D laserTexture;
 
+	std::vector<TextureManager> shipTextures;
+	TextureManager alienTexture;
+	TextureManager barrierTexture;
+	TextureManager laserTexture;
 };

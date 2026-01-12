@@ -2,9 +2,6 @@
 #include "Constants.h"
 #include <iostream>
 #include <vector>
-#include <chrono>
-#include <thread>
-#include <fstream>
 #include <algorithm>
 
 float lineLength(Vector2 A, Vector2 B) 
@@ -51,10 +48,7 @@ void Game::Continue()
 	gameState = State::STARTSCREEN;
 }
 
-void Game::Launch()
-{
-	resources.Load();
-}
+
 
 
 void Game::HandleInput()
@@ -295,6 +289,7 @@ void Game::HandleLoseConditions()
 
 void Game::Collision()// TODO: improve name
 {// TODO: nesting
+// TODO: raw for
 	for (int i = 0; i < Projectiles.size(); i++)
 	{
 		if (Projectiles[i].type == EntityType::PLAYER_PROJECTILE)
@@ -439,18 +434,18 @@ void Game::RenderGameplay()
 	DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
 
 
-	player.Render(resources.shipTextures[player.activeTexture]);
+	player.Render(resources.shipTextures[player.activeTexture].Get());
 
 	std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
-		projectile.Render(resources.laserTexture);
+		projectile.Render(resources.laserTexture.Get());
 		});
 
 	std::ranges::for_each(Walls, [&](Wall& wall) {
-		wall.Render(resources.barrierTexture);
+		wall.Render(resources.barrierTexture.Get());
 		});
 
 	std::ranges::for_each(Aliens, [&](Alien& alien) {
-		alien.Render(resources.alienTexture);
+		alien.Render(resources.alienTexture.Get());
 		});
 }
 

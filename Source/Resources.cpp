@@ -1,13 +1,14 @@
 #include "Resources.h"
-#include <iostream>;
 
-void Resources::Load()
+Resources::Resources()
+    : shipTextures()
+    , alienTexture("Assets/alien.png")
+    , barrierTexture("Assets/barrier.png")
+    , laserTexture("Assets/laser.png")
 {
-	//Todo: RAII?
-	alienTexture = LoadTexture("./Assets/Alien.png");
-	barrierTexture = LoadTexture("./Assets/Barrier.png");
-	shipTextures.push_back(LoadTexture("./Assets/Ship1.png"));
-	shipTextures.push_back(LoadTexture("./Assets/Ship2.png"));
-	shipTextures.push_back(LoadTexture("./Assets/Ship3.png"));
-	laserTexture = LoadTexture("./Assets/Laser.png");
+    shipTextures.reserve(3);
+    shipTextures.emplace_back("Assets/ship1.png");
+    shipTextures.emplace_back("Assets/ship2.png");
+    shipTextures.emplace_back("Assets/ship3.png");
 }
+	

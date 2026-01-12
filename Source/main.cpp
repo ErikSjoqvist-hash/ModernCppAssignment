@@ -34,25 +34,18 @@ int main(void)
     SetTargetFPS(Constant::Window::fps);
 
     Game game = { State::STARTSCREEN };
-    Resources resources;
-    game.resources = resources;
-    game.Launch();
 
 
    
     while (!WindowShouldClose())   
-    {
-        
+    {        
         game.HandleInput();
 
         game.Update();
 
-
         BeginDrawing();
 
         ClearBackground(BLACK);
-
-
 
         game.Render();
 
