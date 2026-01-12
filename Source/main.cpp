@@ -39,11 +39,6 @@ int main(void)
     game.Launch();
 
 
-    InitAudioDevice();
-
-    auto sound = LoadSound("./hitHurt.ogg");
-
-
    
     while (!WindowShouldClose())   
     {
@@ -63,8 +58,6 @@ int main(void)
 
         EndDrawing();
     }
-
-    CloseAudioDevice();
 
     CloseWindow();
 
