@@ -4,10 +4,10 @@ TextureManager::TextureManager() noexcept
     : texture{}
 {}
 
-TextureManager::TextureManager(const std::filesystem::path& path)
+TextureManager::TextureManager(const std::string_view path)
     : texture{} 
 {
-    texture = LoadTexture(path.string().c_str());
+    texture = LoadTexture(path.data());
 }
 
 TextureManager::~TextureManager() noexcept

@@ -1,8 +1,7 @@
 #include "Resources.h"
 
 Resources::Resources()
-    : shipTextures()
-    , alienTexture("Assets/alien.png")
+    : alienTexture("Assets/alien.png")
     , barrierTexture("Assets/barrier.png")
     , laserTexture("Assets/laser.png")
 {

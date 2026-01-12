@@ -9,7 +9,7 @@ public:
 
 
 	std::vector<TextureManager> shipTextures;
-	TextureManager alienTexture;
-	TextureManager barrierTexture;
-	TextureManager laserTexture;
+	const TextureManager alienTexture;
+	const TextureManager barrierTexture;
+	const TextureManager laserTexture;
 };

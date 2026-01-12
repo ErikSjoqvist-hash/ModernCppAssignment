@@ -1,12 +1,12 @@
 #pragma once
-#include <filesystem>
+#include <string_view>
 #include <raylib.h>
 
 class TextureManager
 {
 public:
     TextureManager() noexcept;
-    explicit TextureManager(const std::filesystem::path& path);
+    explicit TextureManager(const std::string_view path);
     ~TextureManager() noexcept;
 
     TextureManager(const TextureManager&) = delete;
