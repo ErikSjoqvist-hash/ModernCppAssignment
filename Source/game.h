@@ -206,8 +206,7 @@ struct Game
 
 
 	//TEXTBOX ENTER
-	char name[9 + 1] = "\0";      //One extra space required for null terminator char '\0'
-	int letterCount = 0;
+	std::string name{ };   
 
 	
 	bool mouseOnText = false;

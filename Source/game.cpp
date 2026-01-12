@@ -106,32 +106,33 @@ void Game::HandleInput()
 
 			if (mouseOnText)
 			{
-				// Set the window's cursor to the I-Beam
 				SetMouseCursor(MOUSE_CURSOR_IBEAM);
 
-				// Get char pressed on the queue
-				int key = GetCharPressed();
+				constexpr int min_printable_char = 32;
+				constexpr int max_printable_char = 125;
+				constexpr size_t max_name_length = 9;
 
-				// Check if more characters have been pressed on the same frame
+				int key = GetCharPressed();
 				while (key > 0)
 				{
-					// NOTE: Only allow keys in range [32..125]
-					if ((key >= 32) && (key <= 125) && (letterCount < 9))
-					{
-						name[letterCount] = (char)key;
-						name[letterCount + 1] = '\0'; // Add null terminator at the end of the string.
-						letterCount++;
+					if (key < min_printable_char || key > max_printable_char) {
+						key = GetCharPressed();
+						continue;
 					}
 
-					key = GetCharPressed();  // Check next character in the queue
+					if (name.size() >= max_name_length) {
+						key = GetCharPressed();
+						continue;
+					}
+
+					name.push_back(static_cast<char>(key));
+
+					key = GetCharPressed();
 				}
 
-				//Remove chars 
-				if (IsKeyPressed(KEY_BACKSPACE))
+				if (IsKeyPressed(KEY_BACKSPACE) && name.size() > 0)
 				{
-					letterCount--;
-					if (letterCount < 0) letterCount = 0;
-					name[letterCount] = '\0';
+					name.pop_back();
 				}
 			}
 			else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
@@ -145,7 +146,7 @@ void Game::HandleInput()
 				framesCounter = 0;
 			}
 
-			if (letterCount > 0 && letterCount < 9 && IsKeyReleased(KEY_ENTER))
+			if (name.size() > 0 && name.size() < 9 && IsKeyReleased(KEY_ENTER))
 			{
 				std::string nameEntry(name);
 
@@ -402,17 +403,17 @@ void Game::RenderNameInputMenu()
 		DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
 	}
 
-	DrawText(name, (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON);
+	DrawText(name.c_str(), (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON);
 
-	DrawText(TextFormat("INPUT CHARS: %i/%i", letterCount, 8), 600, 600, Constant::UI::FontSize::Small, YELLOW);
+	DrawText(TextFormat("INPUT CHARS: %i/%i", name.size(), 8), 600, 600, Constant::UI::FontSize::Small, YELLOW);
 
 	if (mouseOnText)
 	{
-		if (letterCount < 9)
+		if (name.size() < 9)
 		{
 			if (((framesCounter / 20) % 2) == 0)
 			{
-				DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name, 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON);
+				DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name.c_str(), 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON);
 			}
 
 		}
@@ -423,7 +424,7 @@ void Game::RenderNameInputMenu()
 
 	}
 
-	if (letterCount > 0 && letterCount < 9)
+	if (name.size() > 0 && name.size() < 9)
 	{
 		DrawText("PRESS ENTER TO CONTINUE", 600, 800, Constant::UI::FontSize::Medium, YELLOW);
 	}
