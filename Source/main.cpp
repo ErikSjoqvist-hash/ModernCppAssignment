@@ -54,7 +54,6 @@ int main(void)
 
     CloseWindow();
 
-    std::string filename = "level.txt";  //Todo: unused
 
     return 0;
 }
