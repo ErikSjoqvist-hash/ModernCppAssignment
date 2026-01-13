@@ -25,7 +25,7 @@
 #include "game.h"
 #include "Constants.h"
 
-int main(void)
+int main()
 {
     
 
