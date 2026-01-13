@@ -24,36 +24,27 @@
 #include "raylib.h"
 #include "game.h"
 #include "Constants.h"
+#include "Window.h"
 
 int main()
 {
-    
+    Window window(Constant::Window::Width,
+        Constant::Window::Height,
+        "SPACE INVADERS",
+        Constant::Window::fps);
 
-    InitWindow(Constant::Window::Width, Constant::Window::Height, "SPACE INVADERS");
+    Game game{ State::STARTSCREEN };
 
-    SetTargetFPS(Constant::Window::fps);
-
-    Game game = { State::STARTSCREEN };
-
-
-   
-    while (!WindowShouldClose())   
-    {        
+    while (!WindowShouldClose())
+    {
         game.HandleInput();
-
         game.Update();
 
         BeginDrawing();
-
         ClearBackground(BLACK);
-
         game.Render();
-
         EndDrawing();
     }
-
-    CloseWindow();
-
 
     return 0;
 }

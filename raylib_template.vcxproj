@@ -175,6 +175,7 @@
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\Resources.h" />
     <ClInclude Include="Source\TextureManager.h" />
+    <ClInclude Include="Source\Window.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
