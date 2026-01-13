@@ -72,14 +72,16 @@ void Game::HandleInput()
 
 
 
+
 		if (IsKeyPressed(KEY_SPACE))
 		{
 			Projectile newProjectile;
 			newProjectile.position.x = player.x_pos;
-			newProjectile.position.y = Constant::Window::Height - 130;
+			newProjectile.position.y = Constant::Window::Height + Constant::Projectile::playerShootOffset;
 			newProjectile.type = EntityType::PLAYER_PROJECTILE;
 			Projectiles.push_back(newProjectile);
 		}
+
 
 
 
@@ -104,7 +106,6 @@ void Game::HandleInput()
 
 				constexpr int min_printable_char = 32;
 				constexpr int max_printable_char = 125;
-				constexpr size_t max_name_length = 9;
 
 				int key = GetCharPressed();
 				while (key > 0)
@@ -114,7 +115,7 @@ void Game::HandleInput()
 						continue;
 					}
 
-					if (name.size() >= max_name_length) {
+					if (name.size() > Constant::UI::maxNameLength) {
 						key = GetCharPressed();
 						continue;
 					}
@@ -140,7 +141,7 @@ void Game::HandleInput()
 				framesCounter = 0;
 			}
 
-			if (name.size() > 0 && name.size() < 9 && IsKeyReleased(KEY_ENTER))
+			if (name.size() > 0 && name.size() <= Constant::UI::maxNameLength && IsKeyReleased(KEY_ENTER))
 			{
 				std::string nameEntry(name);
 
@@ -190,27 +191,27 @@ void Game::Update()
 		playerPos = { player.x_pos, player.player_base_height };
 		cornerPos = { 0, player.player_base_height };
 		offset = lineLength(playerPos, cornerPos) * -1;
-		background.Update(offset / 15);
+		background.Update(offset / Constant::Background::offsetDivisor);
 
 
 		Collision();
 
 
 
-		shootTimer += 1;
-		if (shootTimer > 59)
+		shootTimer++;
+		if (shootTimer >= Constant::Window::fps)
 		{
-			int randomAlienIndex = 0;
+			int randomAlienIndex{ 0 };
 
 			if (Aliens.size() > 1)
 			{
-				randomAlienIndex = GetRandomValue(0, 100) % Aliens.size();
+				randomAlienIndex = GetRandomValue(0, Aliens.size() - 1);
 			}
 
 			Projectile newProjectile;
 			newProjectile.position = Aliens[randomAlienIndex].position;
-			newProjectile.position.y += 40;
-			newProjectile.speed = -15;
+			newProjectile.position.y += Constant::Projectile::alienShootOffset;
+			newProjectile.speed = Constant::Projectile::speed * Constant::Direction::down;
 			newProjectile.type = EntityType::ENEMY_PROJECTILE;
 			Projectiles.push_back(newProjectile);
 			shootTimer = 0;
@@ -303,7 +304,7 @@ void Game::Collision()// TODO: improve name
 						{
 							proj.active = false;
 							alien.active = false;
-							score += 100;
+							score += Constant::Score::alienKill;
 						}
 					});
 			}
@@ -368,15 +369,15 @@ void Game::RenderLeaderboardMenu()
 {
 	//TODO: magic numbers
 	//TODO: Raw for
-	DrawText("PRESS ENTER TO CONTINUE", 600, 200, Constant::UI::FontSize::Medium, YELLOW);
+	DrawText("PRESS ENTER TO CONTINUE", Constant::UI::continueTextX, Constant::UI::continueTextY, Constant::UI::FontSize::Medium, YELLOW);
 
-	DrawText("LEADERBOARD", 50, 100, Constant::UI::FontSize::Medium, YELLOW);
+	DrawText("LEADERBOARD", Constant::UI::Leaderboard::TitleX, Constant::UI::Leaderboard::TitleY, Constant::UI::FontSize::Medium, YELLOW);
 
 	for (int i = 0; i < Leaderboard.size(); i++)
 	{
 		const char* tempNameDisplay = Leaderboard[i].name.data();
-		DrawText(tempNameDisplay, 50, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
-		DrawText(TextFormat("%i", Leaderboard[i].score), 350, 140 + (i * 40), Constant::UI::FontSize::Medium, YELLOW);
+		DrawText(tempNameDisplay, Constant::UI::Leaderboard::NameX, Constant::UI::Leaderboard::StartY + (i * Constant::UI::Leaderboard::RowSpacing), Constant::UI::FontSize::Medium, YELLOW);
+		DrawText(TextFormat("%i", Leaderboard[i].score), Constant::UI::Leaderboard::ScoreX, Constant::UI::Leaderboard::StartY + (i * Constant::UI::Leaderboard::RowSpacing), Constant::UI::FontSize::Medium, YELLOW);
 	}
 }
 
@@ -386,11 +387,11 @@ void Game::RenderNameInputMenu()
 	//TODO: long function
 	//TODO: casts
 	//TODO: nesting
-	DrawText("NEW HIGHSCORE!", 600, 300, Constant::UI::FontSize::Large, YELLOW);
+	DrawText("NEW HIGHSCORE!", Constant::UI::newHighScoreX, Constant::UI::newHighScoreY, Constant::UI::FontSize::Large, YELLOW);
 
 
 
-	DrawText("PLACE MOUSE OVER INPUT BOX!", 600, 400, Constant::UI::FontSize::Small, YELLOW);
+	DrawText("PLACE MOUSE OVER INPUT BOX!", Constant::UI::inputBoxInfoX, Constant::UI::inputBoxInfoY, Constant::UI::FontSize::Small, YELLOW);
 
 	DrawRectangleRec(Constant::UI::textBox, LIGHTGRAY);
 	if (mouseOnText)
@@ -402,30 +403,30 @@ void Game::RenderNameInputMenu()
 		DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
 	}
 
-	DrawText(name.c_str(), (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON);
+	DrawText(name.c_str(), (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
 
-	DrawText(TextFormat("INPUT CHARS: %i/%i", name.size(), 8), 600, 600, Constant::UI::FontSize::Small, YELLOW);
+	DrawText(TextFormat("INPUT CHARS: %i/%i", name.size(), Constant::UI::maxNameLength), Constant::UI::inputCharsX, Constant::UI::inputCharsY, Constant::UI::FontSize::Small, YELLOW);
 
 	if (mouseOnText)
 	{
-		if (name.size() < 9)
+		if (name.size() <= Constant::UI::maxNameLength)
 		{
-			if (((framesCounter / 20) % 2) == 0)
+			if (((framesCounter / 20) % 2) == 0) // TODO: magic numbers
 			{
-				DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name.c_str(), 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON);
+				DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name.c_str(), 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
 			}
 
 		}
 		else
 		{
-			DrawText("Press BACKSPACE to delete chars...", 600, 650, Constant::UI::FontSize::Small, YELLOW);
+			DrawText("Press BACKSPACE to delete chars...", Constant::UI::inputWarnX, Constant::UI::inputWarnY, Constant::UI::FontSize::Small, YELLOW);
 		}
 
 	}
 
-	if (name.size() > 0 && name.size() < 9)
+	if (name.size() > 0 && name.size() <= Constant::UI::maxNameLength)
 	{
-		DrawText("PRESS ENTER TO CONTINUE", 600, 800, Constant::UI::FontSize::Medium, YELLOW);
+		DrawText("PRESS ENTER TO CONTINUE", Constant::UI::enterContinueX, Constant::UI::enterContinueY, Constant::UI::FontSize::Medium, YELLOW);
 	}
 }
 
@@ -434,8 +435,8 @@ void Game::RenderGameplay()
 	//background render LEAVE THIS AT TOP
 	background.Render(); // TODO: render layers
 
-	DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW);
-	DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW);
+	DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
+	DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
 
 
 	player.Render(resources.shipTextures[player.activeTexture].Get());
@@ -455,9 +456,9 @@ void Game::RenderGameplay()
 
 void Game::RenderStartScreen()
 {
-	DrawText("SPACE INVADERS", 200, 100, Constant::UI::FontSize::VeryLarge, YELLOW);
+	DrawText("SPACE INVADERS", 200, 100, Constant::UI::FontSize::VeryLarge, YELLOW); // TODO: magic numbers
 
-	DrawText("PRESS SPACE TO BEGIN", 200, 350, Constant::UI::FontSize::Medium, YELLOW);
+	DrawText("PRESS SPACE TO BEGIN", 200, 350, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
 }
 
 
@@ -486,11 +487,12 @@ void Game::SpawnAliens()
 		std::ranges::for_each(std::views::iota(0, Constant::EnemyFormation::Width), [&](int col) {
 			Alien newAlien = Alien();
 			newAlien.active = true;
-			newAlien.position.x = Constant::EnemyFormation::YCord + 450 + (col * Constant::EnemyFormation::Spacing);
+			newAlien.position.x = Constant::EnemyFormation::YCord + Constant::EnemyFormation::startXOffset + (col * Constant::EnemyFormation::Spacing);
 			newAlien.position.y = Constant::EnemyFormation::YCord + (row * Constant::EnemyFormation::Spacing);
 			Aliens.push_back(newAlien);
 			});
 		});
+
 
 }
 
@@ -562,12 +564,12 @@ void Player::Update()
 
 	timer += GetFrameTime();
 
-	if (timer > 0.4 && activeTexture == 2)
+	if (timer > Constant::Animation::frameDuration && activeTexture == Constant::Animation::playerMaxTextureIndex)
 	{
 		activeTexture = 0;
 		timer = 0;
 	}
-	else if (timer > 0.4)
+	else if (timer > Constant::Animation::frameDuration)
 	{
 		activeTexture++;
 		timer = 0;
@@ -583,14 +585,14 @@ void Player::Render(Texture2D texture)
 		{
 			0,
 			0,
-			352,
-			352,
+			Constant::Texture::playerSrcSize,
+			Constant::Texture::playerSrcSize,
 		},
 		{
 			x_pos, Constant::Window::Height - player_base_height,
-			100,
-			100,
-		}, { 50, 50 },
+			Constant::Texture::playerRenderSize,
+			Constant::Texture::playerRenderSize,
+		}, { Constant::Texture::playerOrigin, Constant::Texture::playerOrigin },
 		0,
 		WHITE);
 }
@@ -600,13 +602,13 @@ void Projectile::Update()
 {//TODO: magic numbers
 	position.y -= speed;
 
-	lineStart.y = position.y - 15;
-	lineEnd.y = position.y + 15;
+	lineStart.y = position.y - Constant::Projectile::lineHalfLength;
+	lineEnd.y = position.y + Constant::Projectile::lineHalfLength;
 
 	lineStart.x = position.x;
 	lineEnd.x = position.x;
 
-	if (position.y < 0 || position.y > 1500)
+	if (position.y < 0 || position.y > Constant::Projectile::offscreenLimit)
 	{
 		active = false;
 	}
@@ -618,18 +620,19 @@ void Projectile::Render(Texture2D texture)
 		{
 			0,
 			0,
-			176,
-			176,
+			Constant::Projectile::srcSize,
+			Constant::Projectile::srcSize,
 		},
 		{
 			position.x,
 			position.y,
-			50,
-			50,
-		}, { 25 , 25 },
+			Constant::Projectile::renderSize,
+			Constant::Projectile::renderSize,
+		}, { Constant::Projectile::renderOrigin , Constant::Projectile::renderOrigin },
 		0,
 		WHITE);
 }
+
 
 void Wall::Update()
 {
@@ -648,20 +651,20 @@ void Wall::Render(Texture2D texture)
 		{
 			0,
 			0,
-			704,
-			704,
+			Constant::Texture::wallSrcSize,
+			Constant::Texture::wallSrcSize,
 		},
 		{
 			position.x,
 			position.y,
-			200,
-			200,
-		}, { 100 , 100 },
+			Constant::Texture::wallRenderSize,
+			Constant::Texture::wallRenderSize,
+		}, { Constant::Texture::wallOrigin , Constant::Texture::wallOrigin },
 		0,
 		WHITE);
 
 
-	DrawText(TextFormat("%i", health), position.x - 21, position.y + 10, Constant::UI::FontSize::Medium, RED);
+	DrawText(TextFormat("%i", health), position.x - 21, position.y + 10, Constant::UI::FontSize::Medium, RED); // TODO: magic numbers
 
 }
 
@@ -676,7 +679,7 @@ void Alien::Update()
 		if (position.x >= Constant::Window::Width)
 		{
 			moveRight = false;
-			position.y += 50;
+			position.y += Constant::EnemyFormation::rowDrop; // TODO: move drop to formation
 		}
 	}
 	else
@@ -686,7 +689,7 @@ void Alien::Update()
 		if (position.x <= 0)
 		{
 			moveRight = true;
-			position.y += 50;
+			position.y += Constant::EnemyFormation::rowDrop;
 		}
 	}
 }
@@ -700,15 +703,15 @@ void Alien::Render(Texture2D texture)
 		{
 			0,
 			0,
-			352,
-			352,
+			Constant::Texture::alienSrcSize,
+			Constant::Texture::alienSrcSize,
 		},
 		{
 			position.x,
 			position.y,
-			100,
-			100,
-		}, { 50 , 50 },
+			Constant::Texture::alienRenderSize,
+			Constant::Texture::alienRenderSize,
+		}, { Constant::Texture::alienOrigin , Constant::Texture::alienOrigin },
 		0,
 		WHITE);
 }
@@ -718,7 +721,6 @@ void Star::Update(float starOffset)
 {
 	position.x = initPosition.x + starOffset;
 	position.y = initPosition.y;
-
 }
 
 void Star::Render()
@@ -734,10 +736,10 @@ void Background::Initialize(int starAmount)
 	Stars.reserve(Stars.size() + starAmount);
 	std::generate_n(std::back_inserter(Stars), starAmount, []() {
 		Star newStar;
-		newStar.initPosition.x = GetRandomValue(-150, Constant::Window::Width + 150);
+		newStar.initPosition.x = GetRandomValue(-Constant::Background::initMargin, Constant::Window::Width + Constant::Background::initMargin);
 		newStar.initPosition.y = GetRandomValue(0, Constant::Window::Height);
 		newStar.color = SKYBLUE;
-		newStar.size = GetRandomValue(1, 4) / 2;
+		newStar.size = GetRandomValue(Constant::Background::starSizeMin, Constant::Background::starSizeMax) / Constant::Background::starSizeDivisor;
 		return newStar;
 		});
 }
