@@ -10,7 +10,7 @@ namespace Constant
 
 	constexpr int starCount{ 600 };
 
-	namespace Window
+	namespace Window // TODO: improve
 	{
 		constexpr int Width = 1920;
 		constexpr int Height = 1080;

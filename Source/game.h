@@ -26,10 +26,9 @@ struct PlayerData
 	std::string name;
 	int score;
 };
-//TODO: should be class
+
 struct Player
 {//TODO: magic numbers
-public:
 
 	float x_pos = 0;
 	float speed = 7;
@@ -48,10 +47,8 @@ public:
 
 };
 
-//TODO: should be class
 struct Projectile
 {//TODO: magic numbers
-public:
 	// INITIALIZE PROJECTILE WHILE DEFINING IF ITS PLAYER OR ENEMY 
 	Vector2 position = { 0,0 };
 	int speed = 15;
@@ -66,10 +63,9 @@ public:
 
 	void Render(Texture2D texture);
 };
-//TODO: should be class
+
 struct Wall
 {//TODO: magic numbers
-public:
 	Vector2 position;
 	Rectangle rec;
 	bool active;
@@ -82,10 +78,8 @@ public:
 	void Update();
 };
 
-//TODO: should be class
 struct Alien
 {//TODO: magic numbers
-public:
 
 	Color color = WHITE;
 	Vector2 position = { 0, 0 };
@@ -103,7 +97,6 @@ public:
 	void Render(Texture2D texture);
 };
 
-//TODO: should be class
 
 struct Star
 {
@@ -117,34 +110,26 @@ struct Star
 
 struct Background
 {
+	void Render();
+	void Initialize(int starAmount);
+	void Update(float offset);
+
 
 
 	std::vector<Star> Stars;
 
-	void Initialize(int starAmount);
-	void Update(float offset);
-	void Render();
 
 };
 
-//TODO: should be class
 struct Game
 {//TODO: magic numbers
-	// Gamestate
 	State gameState = {};
 
-	// Score
-	int score;
-
-	
-
-	//Aliens shooting
-	float shootTimer = 0;
 
 
-	
-
-	bool newHighScore = false;
+	void HandleInput();
+	void Update();
+	void Render();
 
 
 	void Start();
@@ -152,16 +137,13 @@ struct Game
 
 	void Continue();
 
-	void HandleInput();
 
-	void Update();
 	void UpdateProjectiles();
 	void UpdateWalls();
 	void UpdateAliens();
 	void EraseInactiveEntities();
 	void HandleLoseConditions();
 	void Collision();
-	void Render();
 
 	void RenderLeaderboardMenu();
 
@@ -180,7 +162,6 @@ struct Game
 
 
 
-	// Entity Storage and Resources
 	Resources resources;
 
 	Player player;
@@ -202,14 +183,16 @@ struct Game
 	Vector2 cornerPos;
 	float offset;
 
+	float shootTimer = 0;
 
 
-	//TEXTBOX ENTER
 	std::string name{ };   
 
 	
 	bool mouseOnText = false;
+	bool newHighScore = false;
 
 	int framesCounter = 0;
+	int score;
 
 };

@@ -16,7 +16,7 @@
 *
 *   Example licensed under an unmodified zlib/libpng license, which is an OSI-certified,
 *   BSD-like license that allows static linking with closed source software
-*b
+*
 *   Copyright (c) 2013-2022 Ramon Santamaria (@raysan5)
 *
 ********************************************************************************************/
@@ -32,7 +32,7 @@ int main()
 {
     Window window(Constant::Window::Config);
 
-    Game game{ State::STARTSCREEN };
+    Game game{ State::STARTSCREEN };// TODO: would it ever be initialised to something else?
 
     while (!WindowShouldClose())
     {
