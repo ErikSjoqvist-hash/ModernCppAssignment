@@ -1,13 +1,22 @@
 #pragma once
 #include <raylib.h>
+#include <string_view>
+
+struct WindowConfig
+{
+    int width;
+    int height;
+    std::string_view title;
+    int fps;
+};
 
 class Window
 {
 public:
-    Window(int width, int height, const char* title, int fps)
+    Window(const WindowConfig& config)
     {
-        InitWindow(width, height, title);
-        SetTargetFPS(fps);
+        InitWindow(config.width, config.height, config.title.data());
+        SetTargetFPS(config.fps);
     }
 
     ~Window() noexcept

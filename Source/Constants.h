@@ -1,5 +1,5 @@
 #pragma once
-
+#include "Window.h"
 namespace Constant
 {
 	namespace Wall
@@ -15,6 +15,12 @@ namespace Constant
 		constexpr int Width = 1920;
 		constexpr int Height = 1080;
 		constexpr int fps = 60;
+		constexpr WindowConfig Config{
+		Width,
+		Height,
+		"SPACE INVADERS",
+		fps
+		};
 	}
 
 	namespace EnemyFormation

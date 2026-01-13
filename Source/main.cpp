@@ -26,12 +26,11 @@
 #include "Constants.h"
 #include "Window.h"
 
+
+
 int main()
 {
-    Window window(Constant::Window::Width,
-        Constant::Window::Height,
-        "SPACE INVADERS",
-        Constant::Window::fps);
+    Window window(Constant::Window::Config);
 
     Game game{ State::STARTSCREEN };
 
