@@ -2,8 +2,9 @@
 #include "Constants.h"
 #include <vector>
 #include <algorithm>
+#include <ranges>
 
-float lineLength(Vector2 A, Vector2 B) 
+float lineLength(Vector2 A, Vector2 B)
 {
 	const float length = sqrtf(pow(B.x - A.x, 2) + pow(B.y - A.y, 2));
 
@@ -288,43 +289,47 @@ void Game::HandleLoseConditions()
 
 void Game::Collision()// TODO: improve name
 {// TODO: nesting
-// TODO: raw for
-	for (int i = 0; i < Projectiles.size(); i++)
-	{
-		if (Projectiles[i].type == EntityType::PLAYER_PROJECTILE)
+	std::ranges::for_each(Projectiles, [&](Projectile& proj)
 		{
-			for (int a = 0; a < Aliens.size(); a++)
+			if (proj.type == EntityType::PLAYER_PROJECTILE)
 			{
-				if (CheckCollisionCircleLine(Aliens[a].position, Aliens[a].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
+				std::ranges::for_each(Aliens, [&](Alien& alien)
+					{
+						if (!alien.active)
+						{
+							return;
+						}
+						if (CheckCollisionCircleLine(alien.position, alien.radius, proj.lineStart, proj.lineEnd))
+						{
+							proj.active = false;
+							alien.active = false;
+							score += 100;
+						}
+					});
+			}
+
+			if (proj.type == EntityType::ENEMY_PROJECTILE)
+			{
+				if (CheckCollisionCircleLine({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, proj.lineStart, proj.lineEnd))
 				{
-					Projectiles[i].active = false;
-					Aliens[a].active = false;
-					score += 100;
+					proj.active = false;
+					player.lives -= 1;
 				}
 			}
-		}
 
-
-		if (Projectiles[i].type == EntityType::ENEMY_PROJECTILE)
-		{
-			if (CheckCollisionCircleLine({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-			{
-				Projectiles[i].active = false;
-				player.lives -= 1;
-			}
-		}
-
-
-
-		for (int b = 0; b < Walls.size(); b++)
-		{
-			if (CheckCollisionCircleLine(Walls[b].position, Walls[b].radius, Projectiles[i].lineStart, Projectiles[i].lineEnd))
-			{
-				Projectiles[i].active = false;
-				Walls[b].health -= 1;
-			}
-		}
-	}
+			std::ranges::for_each(Walls, [&](Wall& wall)
+				{
+					if (!wall.active) 
+					{
+						return;
+					}
+					if (CheckCollisionCircleLine(wall.position, wall.radius, proj.lineStart, proj.lineEnd))
+					{
+						proj.active = false;
+						wall.health -= 1;
+					}
+				});
+		});
 }
 
 
@@ -463,7 +468,7 @@ void Game::SpawnWalls()
 
 	Walls.resize(Constant::Wall::amount);
 	int iterator = 1;
-	for (std::size_t i = 0; i < Walls.size(); ++i) //TODO: temporary raw for as generate was not working
+	for (std::size_t i = 0; i < Walls.size(); ++i) //TODO: temporary raw for as nothing else is working
 	{
 		Wall wall;
 		wall.position.y = Constant::Window::Height - Constant::Wall::positionOffset;
@@ -473,18 +478,19 @@ void Game::SpawnWalls()
 }
 
 void Game::SpawnAliens()
-{//TODO: raw for
+{
 	//TODO: nesting
 	//TODO: object pool
-	for (int row = 0; row < Constant::EnemyFormation::Height; row++) {
-		for (int col = 0; col < Constant::EnemyFormation::Width; col++) {
+	Aliens.reserve(Aliens.size() + (Constant::EnemyFormation::Height * Constant::EnemyFormation::Width));
+	std::ranges::for_each(std::views::iota(0, Constant::EnemyFormation::Height), [&](int row) {
+		std::ranges::for_each(std::views::iota(0, Constant::EnemyFormation::Width), [&](int col) {
 			Alien newAlien = Alien();
 			newAlien.active = true;
 			newAlien.position.x = Constant::EnemyFormation::YCord + 450 + (col * Constant::EnemyFormation::Spacing);
 			newAlien.position.y = Constant::EnemyFormation::YCord + (row * Constant::EnemyFormation::Spacing);
 			Aliens.push_back(newAlien);
-		}
-	}
+			});
+		});
 
 }
 
@@ -723,39 +729,30 @@ void Star::Render()
 
 
 void Background::Initialize(int starAmount)
-{//TODO: raw for
+{
 	//TODO: magic values
 	//TODO: should starAmount constant be used directly?
-	for (int i = 0; i < starAmount; i++)
-	{
+	Stars.reserve(Stars.size() + starAmount);
+	std::generate_n(std::back_inserter(Stars), starAmount, []() {
 		Star newStar;
-
 		newStar.initPosition.x = GetRandomValue(-150, Constant::Window::Width + 150);
 		newStar.initPosition.y = GetRandomValue(0, Constant::Window::Height);
-
-		//random color?
 		newStar.color = SKYBLUE;
-
 		newStar.size = GetRandomValue(1, 4) / 2;
-
-		Stars.push_back(newStar);
-
-	}
+		return newStar;
+		});
 }
 
 void Background::Update(float offset)
-{//TODO: raw for
-	for (int i = 0; i < Stars.size(); i++)
-	{
-		Stars[i].Update(offset);
-	}
-
+{
+	std::ranges::for_each(Stars, [&](Star& s) {
+		s.Update(offset);
+		});
 }
 
 void Background::Render()
-{//TODO: raw for
-	for (int i = 0; i < Stars.size(); i++)
-	{
-		Stars[i].Render();
-	}
+{
+	std::ranges::for_each(Stars, [&](Star& s) {
+		s.Render();
+		});
 }
