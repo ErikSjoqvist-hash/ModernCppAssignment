@@ -631,7 +631,6 @@ void Projectile::Render(Texture2D texture)
 		WHITE);
 }
 
-
 void Wall::Update()
 {
 

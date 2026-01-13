@@ -2,7 +2,7 @@
 #include <vector>
 #include "TextureManager.h"
 
-class Resources
+class Resources // TODO: struct?
 { 
 public:
 	Resources();

@@ -121,8 +121,10 @@ struct Background
 
 };
 
-struct Game
+class Game
 {//TODO: magic numbers
+public:
+	explicit Game(State state = State{}) : gameState(state) {}
 	State gameState = {};
 
 
@@ -131,7 +133,7 @@ struct Game
 	void Update();
 	void Render();
 
-
+private:
 	void Start();
 	void End();
 
@@ -158,7 +160,7 @@ struct Game
 
 	bool CheckNewHighScore();
 
-	void InsertNewHighScore(std::string name);
+	void InsertNewHighScore(const std::string name);
 
 
 

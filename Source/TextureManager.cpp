@@ -26,7 +26,10 @@ TextureManager::TextureManager(TextureManager&& other) noexcept
 TextureManager& TextureManager::operator=(TextureManager&& other) noexcept
 {
     if (this != &other) {
-        if (texture.id != 0) UnloadTexture(texture);
+        if (texture.id != 0)
+        {
+            UnloadTexture(texture);
+        }
         texture = other.texture;
         other.texture = {};
     }
