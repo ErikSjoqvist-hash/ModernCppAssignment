@@ -34,7 +34,7 @@ int main()
 
     Game game{ State::STARTSCREEN };// TODO: would it ever be initialised to something else?
 
-    while (!WindowShouldClose())
+    while (!WindowShouldClose()) // TODO: catch exceptions somwhare
     {
         game.HandleInput();
         game.Update();

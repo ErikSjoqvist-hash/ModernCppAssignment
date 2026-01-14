@@ -1,5 +1,8 @@
 #include "game.h"
 #include "Constants.h"
+#include "Errors.h"
+#include <format>
+#include <print>
 #include <vector>
 #include <algorithm>
 #include <ranges>
@@ -50,121 +53,126 @@ void Game::Continue()
 
 
 
-
 void Game::HandleInput()
 {
-	switch (gameState)
-	{
-	case State::STARTSCREEN:
-		if (IsKeyReleased(KEY_SPACE))
+	try {
+		switch (gameState)
 		{
-			Start();
-
-
-		}
-
-		break;
-	case State::GAMEPLAY:
-		if (IsKeyReleased(KEY_Q))
-		{
-			End();
-		}
-
-		player.direction = 0;
-		if (IsKeyDown(KEY_LEFT)) 
-		{
-			player.direction--;
-		}
-		if (IsKeyDown(KEY_RIGHT))
-		{
-			player.direction++;
-		}
-
-
-		if (IsKeyPressed(KEY_SPACE))
-		{
-			Projectile newProjectile;
-			newProjectile.position.x = player.x_pos;
-			newProjectile.position.y = Constant::Window::Height + Constant::Projectile::playerShootOffset;
-			newProjectile.type = EntityType::PLAYER_PROJECTILE;
-			Projectiles.push_back(newProjectile);
-		}
-
-
-
-
-		break;
-	case State::ENDSCREEN:
-		if (IsKeyReleased(KEY_ENTER) && !newHighScore)
-		{
-			Continue();
-		}
-
-
-
-		if (newHighScore)
-		{
-			if (CheckCollisionPointRec(GetMousePosition(), Constant::UI::textBox)) mouseOnText = true;
-			else mouseOnText = false;
-
-			if (mouseOnText)
+		case State::STARTSCREEN:
+			if (IsKeyReleased(KEY_SPACE))
 			{
-				SetMouseCursor(MOUSE_CURSOR_IBEAM);
+				Start();
 
-				constexpr int min_printable_char = 32;
-				constexpr int max_printable_char = 125;
 
-				int key = GetCharPressed();
-				while (key > 0)
+			}
+
+			break;
+		case State::GAMEPLAY:
+			if (IsKeyReleased(KEY_Q))
+			{
+				End();
+			}
+
+			player.direction = 0;
+			if (IsKeyDown(KEY_LEFT)) 
+			{
+				player.direction--;
+			}
+			if (IsKeyDown(KEY_RIGHT))
+			{
+				player.direction++;
+			}
+
+
+			if (IsKeyPressed(KEY_SPACE))
+			{
+				Projectile newProjectile;
+				newProjectile.position.x = player.x_pos;
+				newProjectile.position.y = Constant::Window::Height + Constant::Projectile::playerShootOffset;
+				newProjectile.type = EntityType::PLAYER_PROJECTILE;
+				Projectiles.push_back(newProjectile);
+			}
+
+			
+
+
+			break;
+		case State::ENDSCREEN:
+			if (IsKeyReleased(KEY_ENTER) && !newHighScore)
+			{
+				Continue();
+			}
+
+
+
+			if (newHighScore)
+			{
+				if (CheckCollisionPointRec(GetMousePosition(), Constant::UI::textBox)) mouseOnText = true;
+				else mouseOnText = false;
+
+				if (mouseOnText)
 				{
-					if (key < min_printable_char || key > max_printable_char) {
+					SetMouseCursor(MOUSE_CURSOR_IBEAM);
+
+					constexpr int min_printable_char = 32;
+					constexpr int max_printable_char = 125;
+
+					int key = GetCharPressed();
+					while (key > 0)
+					{
+						if (key < min_printable_char || key > max_printable_char) {
+							key = GetCharPressed();
+							continue;
+						}
+
+						if (name.size() > Constant::UI::maxNameLength) {
+							key = GetCharPressed();
+							continue;
+						}
+
+						name.push_back(static_cast<char>(key));
+
 						key = GetCharPressed();
-						continue;
 					}
 
-					if (name.size() > Constant::UI::maxNameLength) {
-						key = GetCharPressed();
-						continue;
+					if (IsKeyPressed(KEY_BACKSPACE) && name.size() > 0)
+					{
+						name.pop_back();
 					}
-
-					name.push_back(static_cast<char>(key));
-
-					key = GetCharPressed();
 				}
+				else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
 
-				if (IsKeyPressed(KEY_BACKSPACE) && name.size() > 0)
+				if (mouseOnText)
 				{
-					name.pop_back();
+					framesCounter++;
 				}
-			}
-			else SetMouseCursor(MOUSE_CURSOR_DEFAULT);
+				else
+				{
+					framesCounter = 0;
+				}
 
-			if (mouseOnText)
-			{
-				framesCounter++;
-			}
-			else
-			{
-				framesCounter = 0;
-			}
+				if (name.size() > 0 && name.size() <= Constant::UI::maxNameLength && IsKeyReleased(KEY_ENTER))
+				{
+					std::string nameEntry(name);
 
-			if (name.size() > 0 && name.size() <= Constant::UI::maxNameLength && IsKeyReleased(KEY_ENTER))
-			{
-				std::string nameEntry(name);
+					InsertNewHighScore(nameEntry);
 
-				InsertNewHighScore(nameEntry);
+					newHighScore = false;
+				}
 
-				newHighScore = false;
+
 			}
 
 
+
+			break;
+		default:
+			break;
 		}
-
-
-
-		break;
-	default:
-		break;
+	} catch (const Errors::GameError& e) {
+		std::print(stderr, "Game error in HandleInput: {}\n", e.what());
+	} catch (const std::exception& e) {
+		std::print(stderr, "Unhandled exception in HandleInput: {}\n", e.what());
 	}
 }
 
@@ -172,6 +180,7 @@ void Game::Update()
 {//TODO: nesting
 	//TODO: magic numbers
 	//TODO: long function
+	try {
 	switch (gameState)
 	{
 	case State::STARTSCREEN:
@@ -236,6 +245,11 @@ void Game::Update()
 		break;
 	default:
 		break;
+	}
+	} catch (const Errors::GameError& e) {
+		std::print(stderr, "Game error in Update: {}\n", e.what());
+	} catch (const std::exception& e) {
+		std::print(stderr, "Unhandled exception in Update: {}\n", e.what());
 	}
 }
 
@@ -342,35 +356,40 @@ void Game::Collision()// TODO: improve name
 		});
 }
 
-
 void Game::Render()
 {
-	switch (gameState)
-	{
-	case State::STARTSCREEN:
-
-		RenderStartScreen();
-
-		break;
-	case State::GAMEPLAY:
-
-		RenderGameplay();
-
-		break;
-	case State::ENDSCREEN:
-
-		if (newHighScore)
+	try {
+		switch (gameState)
 		{
-			RenderNameInputMenu();
+		case State::STARTSCREEN:
 
-		}
-		else {
-			RenderLeaderboardMenu();
-		}
+			RenderStartScreen();
 
-		break;
-	default:
-		break;
+			break;
+		case State::GAMEPLAY:
+
+			RenderGameplay();
+
+			break;
+		case State::ENDSCREEN:
+
+			if (newHighScore)
+			{
+				RenderNameInputMenu();
+
+			}
+			else {
+				RenderLeaderboardMenu();
+			}
+
+			break;
+		default:
+			break;
+		}
+	} catch (const Errors::GameError& e) { // TODO: wat
+		Errors::throwIfSerious(false, std::string("Game error in Render: ") + e.what());
+	} catch (const std::exception& e) {
+		Errors::throwIfSerious(false, std::string("Unhandled exception in Render: ") + e.what());
 	}
 }
 
@@ -410,7 +429,6 @@ void Game::RenderNameInputMenu()
 	//TODO: nesting
 	DrawText("NEW HIGHSCORE!", Constant::UI::newHighScoreX, Constant::UI::newHighScoreY, Constant::UI::FontSize::Large, YELLOW);
 	
-
 
 	DrawText("PLACE MOUSE OVER INPUT BOX!", Constant::UI::inputBoxInfoX, Constant::UI::inputBoxInfoY, Constant::UI::FontSize::Small, YELLOW);
 
@@ -485,6 +503,8 @@ void Game::RenderStartScreen()
 
 void Game::SpawnWalls()
 {
+	Errors::ensurePrecondition(Constant::Wall::amount > 0, "Wall amount must be greater than zero");
+
 	constexpr int gapCount{ Constant::Wall::amount + 1 };
 	const int wall_distance = Constant::Window::Width / gapCount;
 
@@ -500,6 +520,8 @@ void Game::SpawnWalls()
 
 void Game::SpawnAliens()
 {
+	Errors::ensurePrecondition(Constant::EnemyFormation::Width > 0 && Constant::EnemyFormation::Height > 0, "Enemy formation dimensions must be positive");
+
 	//TODO: nesting
 	//TODO: object pool
 	Aliens.reserve(Aliens.size() + (Constant::EnemyFormation::Height * Constant::EnemyFormation::Width));
@@ -516,6 +538,8 @@ void Game::SpawnAliens()
 
 bool Game::CheckNewHighScore()
 {
+	Errors::ensurePrecondition(!Leaderboard.empty(), "Leaderboard must not be empty when checking new high score");
+
 	if (score > Leaderboard[Constant::UI::Leaderboard::lastRowIndex].score)
 	{
 		return true;
@@ -526,6 +550,12 @@ bool Game::CheckNewHighScore()
 
 void Game::InsertNewHighScore(std::string name)
 {
+	Errors::ensurePrecondition(!Leaderboard.empty(), "Leaderboard must not be empty to insert a new high score");
+
+	if (name.empty())
+	{
+		name = "ANON";
+	}
 	PlayerData newData{ std::move(name), score };
 
 	auto insertion_point = std::ranges::find_if(Leaderboard,
@@ -599,6 +629,9 @@ void Player::Render(Texture2D texture)
 
 void Projectile::Update()
 {//TODO: magic numbers
+	// precondition
+	Errors::ensurePrecondition(Constant::Projectile::lineHalfLength > 0, "Projectile::lineHalfLength must be positive");
+
 	position.y -= speed;
 
 	lineStart.y = position.y - Constant::Projectile::lineHalfLength;
@@ -730,7 +763,7 @@ void Star::Render()
 
 void Background::Initialize(int starAmount)
 {
-	//TODO: magic values
+	Errors::ensurePrecondition(starAmount > 0, "starAmount must be positive");
 	//TODO: should starAmount constant be used directly?
 	Stars.reserve(Stars.size() + starAmount);
 	std::generate_n(std::back_inserter(Stars), starAmount, []() {
