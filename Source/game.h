@@ -3,6 +3,7 @@
 #include <vector>
 #include "Resources.h"
 #include <string>
+#include "Constants.h"
 
 enum struct State
 {
@@ -29,12 +30,12 @@ struct Player
 {//TODO: magic numbers
 
 	float x_pos = 0;
-	float speed = 7;
-	float player_base_height = 70.0f;
-	float radius = 50;
-	int lives = 3;
+	float speed = Constant::Player::speed;
+	float player_base_height = Constant::Player::baseHeight;
+	float radius = Constant::Player::radius;
+	int lives = Constant::Player::lives;
 	int direction = 0;
-	int activeTexture = 0;
+	int activeTexture = Constant::Player::activeTexture;
 	float timer = 0;
 
 	EntityType type = EntityType::PLAYER;
@@ -48,7 +49,7 @@ struct Player
 struct Projectile
 {//TODO: magic numbers
 	Vector2 position = { 0,0 };
-	int speed = 15;
+	int speed = Constant::Projectile::speed;
 	bool active = true;
 	EntityType type = {};
 
@@ -66,8 +67,8 @@ struct Wall
 	Rectangle rec;
 	bool active;
 	Color color;
-	int health = 50;
-	int radius = 60;
+	int health = Constant::Wall::defaultHealth;
+	int radius = Constant::Wall::defaultRadius;
 
 
 	void Render(Texture2D texture);
@@ -81,13 +82,13 @@ struct Alien
 	Vector2 position = { 0, 0 };
 	int x = 0;
 	int y = 0;
-	float radius = 30;
+	float radius = Constant::Alien::radius;
 	bool active = true;
 	bool moveRight = true;
 
 	EntityType type = EntityType::ENEMY;
 
-	int speed = 2;
+	int speed = Constant::Alien::speed;
 
 	void Update();
 	void Render(Texture2D texture);
@@ -156,7 +157,7 @@ private:
 
 	bool CheckNewHighScore();
 
-	void InsertNewHighScore(const std::string name);
+	void InsertNewHighScore(std::string name);
 
 
 
@@ -176,6 +177,7 @@ private:
 
 
 
+	
 	Vector2 playerPos;
 	Vector2 alienPos;
 	Vector2 cornerPos;
@@ -184,7 +186,7 @@ private:
 	float shootTimer = 0;
 
 
-	std::string name{ };   
+	std::string name{ };
 
 	
 	bool mouseOnText = false;

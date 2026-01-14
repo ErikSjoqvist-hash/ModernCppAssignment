@@ -6,6 +6,8 @@ namespace Constant
 	{
 		constexpr int amount{ 5 };
 		constexpr int positionOffset{ 250 };
+		constexpr int defaultHealth{ 50 };
+		constexpr int defaultRadius{ 60 };
 	}
 
 	constexpr int starCount{ 600 };
@@ -89,6 +91,21 @@ namespace Constant
 		constexpr int playerMaxTextureIndex{ 2 };
 	}
 
+	namespace Player
+	{
+		constexpr float speed{ 7.0f };
+		constexpr float baseHeight{ 70.0f };
+		constexpr float radius{ 50.0f };
+		constexpr int lives{ 3 };
+		constexpr int activeTexture{ 0 };
+	}
+
+	namespace Alien
+	{
+		constexpr float radius{ 30.0f };
+		constexpr int speed{ 2 };
+	}
+
 	namespace UI
 	{
 		constexpr Rectangle textBox{ 600, 500, 225, 50 };
@@ -108,7 +125,7 @@ namespace Constant
 		constexpr int RowSpacing{ 40 };
 		constexpr int ScoreX{ 350 };
 		constexpr int Count{ 5 }; 
-		constexpr int lastRowIndex{ 4 }; 
+		constexpr int lastRowIndex{ 4 };
 		}
 
 		constexpr int newHighScoreX{ 600 };
