@@ -2,7 +2,6 @@
 #include <stdexcept>
 #include <string>
 
-// Throw by value and catch by (const) reference.
 namespace Errors
 {
 	class GameError : public std::runtime_error
@@ -40,7 +39,6 @@ namespace Errors
 
 
 
-	// Preconditions / postconditions / invariants. Use these to state contracts.
 	inline void ensurePrecondition(bool condition, const std::string& message)
 	{
 		if (!condition) throw PreconditionError(message);
@@ -57,14 +55,7 @@ namespace Errors
 	}
 
 
-	// Serious failure: throw a general game error
-	inline void throwIfSerious(bool condition, const std::string& message)
-	{
-		if (!condition)
-		{
-			throw GameError(message);
-		}
-	}
+	
 
 	[[noreturn]] inline void failResource(const std::string& message)
 	{
@@ -72,5 +63,4 @@ namespace Errors
 	}
 }
 
-// Note: prefer throwing the specific derived types above. Catch by const reference to Errors::GameError.
 

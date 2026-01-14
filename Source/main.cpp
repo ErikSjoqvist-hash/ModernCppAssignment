@@ -25,25 +25,50 @@
 #include "game.h"
 #include "Constants.h"
 #include "Window.h"
-
-
+#include "Errors.h"
+#include <print>
 
 int main()
 {
-    Window window(Constant::Window::Config);
+    try {
+        Window window(Constant::Window::Config);
+        Game game{ State::STARTSCREEN };
 
-    Game game{ State::STARTSCREEN };
+        while (!WindowShouldClose())
+        {
+            try {
+                game.HandleInput();
+                game.Update();
 
-    while (!WindowShouldClose()) 
-    {
-        game.HandleInput();
-        game.Update();
+                BeginDrawing();
+                ClearBackground(BLACK);
+                game.Render();
+                EndDrawing();
+            }
+            catch (const Errors::GameError& e) {
+                std::print(stderr, "Error during game loop: {}\n", e.what());
 
-        BeginDrawing();
-        ClearBackground(BLACK);
-        game.Render();
-        EndDrawing();
+                EndDrawing();
+
+            }
+        }
+
+        return 0;
     }
-
-    return 0;
+    catch (const Errors::ResourceError& e) {
+        std::print(stderr, "Fatal resource error: {}\n", e.what());
+        return 1;
+    }
+    catch (const Errors::GameError& e) {
+        std::print(stderr, "Fatal game error: {}\n", e.what());
+        return 1;
+    }
+    catch (const std::exception& e) {
+        std::print(stderr, "Fatal unexpected error: {}\n", e.what());
+        return 1;
+    }
+    catch (...) {
+        std::print(stderr, "Fatal unknown error occurred\n");
+        return 1;
+    }
 }
