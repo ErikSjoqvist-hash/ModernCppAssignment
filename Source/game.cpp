@@ -70,7 +70,15 @@ void Game::HandleInput()
 			End();
 		}
 
-
+		player.direction = 0;
+		if (IsKeyDown(KEY_LEFT)) 
+		{
+			player.direction--;
+		}
+		if (IsKeyDown(KEY_RIGHT))
+		{
+			player.direction++;
+		}
 
 
 		if (IsKeyPressed(KEY_SPACE))
@@ -81,7 +89,6 @@ void Game::HandleInput()
 			newProjectile.type = EntityType::PLAYER_PROJECTILE;
 			Projectiles.push_back(newProjectile);
 		}
-
 
 
 
@@ -184,7 +191,6 @@ void Game::Update()
 		UpdateAliens();
 
 		HandleLoseConditions();
-
 
 
 		// TODO: improve
@@ -403,7 +409,7 @@ void Game::RenderNameInputMenu()
 	//TODO: casts
 	//TODO: nesting
 	DrawText("NEW HIGHSCORE!", Constant::UI::newHighScoreX, Constant::UI::newHighScoreY, Constant::UI::FontSize::Large, YELLOW);
-
+	
 
 
 	DrawText("PLACE MOUSE OVER INPUT BOX!", Constant::UI::inputBoxInfoX, Constant::UI::inputBoxInfoY, Constant::UI::FontSize::Small, YELLOW);
@@ -506,14 +512,11 @@ void Game::SpawnAliens()
 			Aliens.push_back(newAlien);
 			});
 		});
-
-
 }
 
-
 bool Game::CheckNewHighScore()
-{//TODO: does not need to be a function
-	if (score > Leaderboard[4].score)
+{
+	if (score > Leaderboard[Constant::UI::Leaderboard::lastRowIndex].score)
 	{
 		return true;
 	}
@@ -539,22 +542,12 @@ void Game::InsertNewHighScore(std::string name)
 void Player::Initialize()
 {
 
-	x_pos = Constant::Window::Width / 2;
+	x_pos = static_cast<float>(Constant::Window::Width) / 2;
 
 }
 
 void Player::Update()
-{//TODO: magic numbers
-
-	direction = 0;
-	if (IsKeyDown(KEY_LEFT)) //TODO: put in input handler
-	{
-		direction--;
-	}
-	if (IsKeyDown(KEY_RIGHT))
-	{
-		direction++;
-	}
+{
 
 	x_pos += speed * direction;
 

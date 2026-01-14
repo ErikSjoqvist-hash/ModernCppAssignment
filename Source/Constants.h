@@ -107,7 +107,8 @@ namespace Constant
 		constexpr int StartY{ 140 };
 		constexpr int RowSpacing{ 40 };
 		constexpr int ScoreX{ 350 };
-		constexpr int Count{ 5 }; // number of leaderboard rows
+		constexpr int Count{ 5 }; 
+		constexpr int lastRowIndex{ 4 }; 
 		}
 
 		constexpr int newHighScoreX{ 600 };
