@@ -370,17 +370,29 @@ void Game::Render()
 
 void Game::RenderLeaderboardMenu()
 {
-	//TODO: magic numbers
-	//TODO: Raw for
-	DrawText("PRESS ENTER TO CONTINUE", Constant::UI::continueTextX, Constant::UI::continueTextY, Constant::UI::FontSize::Medium, YELLOW);
+	DrawText("PRESS ENTER TO CONTINUE",
+		Constant::UI::continueTextX,
+		Constant::UI::continueTextY,
+		Constant::UI::FontSize::Medium,
+		YELLOW);
+	DrawText("LEADERBOARD",
+		Constant::UI::Leaderboard::TitleX,
+		Constant::UI::Leaderboard::TitleY,
+		Constant::UI::FontSize::Medium,
+		YELLOW);
 
-	DrawText("LEADERBOARD", Constant::UI::Leaderboard::TitleX, Constant::UI::Leaderboard::TitleY, Constant::UI::FontSize::Medium, YELLOW);
-
-	for (int i = 0; i < Leaderboard.size(); i++)
+	for (const auto& [index, entry] : Leaderboard | std::views::enumerate)
 	{
-		const char* tempNameDisplay = Leaderboard[i].name.data();
-		DrawText(tempNameDisplay, Constant::UI::Leaderboard::NameX, Constant::UI::Leaderboard::StartY + (i * Constant::UI::Leaderboard::RowSpacing), Constant::UI::FontSize::Medium, YELLOW);
-		DrawText(TextFormat("%i", Leaderboard[i].score), Constant::UI::Leaderboard::ScoreX, Constant::UI::Leaderboard::StartY + (i * Constant::UI::Leaderboard::RowSpacing), Constant::UI::FontSize::Medium, YELLOW);
+		DrawText(entry.name.c_str(),
+			Constant::UI::Leaderboard::NameX,
+			Constant::UI::Leaderboard::StartY + (index * Constant::UI::Leaderboard::RowSpacing),
+			Constant::UI::FontSize::Medium,
+			YELLOW);
+		DrawText(TextFormat("%i", entry.score),
+			Constant::UI::Leaderboard::ScoreX,
+			Constant::UI::Leaderboard::StartY + (index * Constant::UI::Leaderboard::RowSpacing),
+			Constant::UI::FontSize::Medium,
+			YELLOW);
 	}
 }
 
@@ -406,7 +418,7 @@ void Game::RenderNameInputMenu()
 		DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
 	}
 
-	DrawText(name.c_str(), (int)Constant::UI::textBox.x + 5, (int)Constant::UI::textBox.y + 8, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
+	DrawText(name.c_str(), (int)Constant::UI::textBox.x + Constant::UI::inputTextPaddingX, (int)Constant::UI::textBox.y + Constant::UI::inputTextPaddingY, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
 
 	DrawText(TextFormat("INPUT CHARS: %i/%i", name.size(), Constant::UI::maxNameLength), Constant::UI::inputCharsX, Constant::UI::inputCharsY, Constant::UI::FontSize::Small, YELLOW);
 
@@ -414,9 +426,9 @@ void Game::RenderNameInputMenu()
 	{
 		if (name.size() <= Constant::UI::maxNameLength)
 		{
-			if (((framesCounter / 20) % 2) == 0) // TODO: magic numbers
+			if (((framesCounter / Constant::UI::cursorBlinkFrames) % 2) == 0) // TODO: magic numbers
 			{
-				DrawText("_", (int)Constant::UI::textBox.x + 8 + MeasureText(name.c_str(), 40), (int)Constant::UI::textBox.y + 12, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
+				DrawText("_", (int)Constant::UI::textBox.x + Constant::UI::inputCursorOffsetX + MeasureText(name.c_str(), Constant::UI::FontSize::Medium), (int)Constant::UI::textBox.y + Constant::UI::inputCursorOffsetY, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
 			}
 
 		}
@@ -438,8 +450,8 @@ void Game::RenderGameplay()
 	//background render LEAVE THIS AT TOP
 	background.Render(); // TODO: render layers
 
-	DrawText(TextFormat("Score: %i", score), 50, 20, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
-	DrawText(TextFormat("Lives: %i", player.lives), 50, 70, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
+	DrawText(TextFormat("Score: %i", score), Constant::UI::scoreTextX, Constant::UI::scoreTextY, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
+	DrawText(TextFormat("Lives: %i", player.lives), Constant::UI::livesTextX, Constant::UI::livesTextY, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
 
 
 	player.Render(resources.shipTextures[player.activeTexture].Get());
@@ -459,26 +471,25 @@ void Game::RenderGameplay()
 
 void Game::RenderStartScreen()
 {
-	DrawText("SPACE INVADERS", 200, 100, Constant::UI::FontSize::VeryLarge, YELLOW); // TODO: magic numbers
+	DrawText("SPACE INVADERS", Constant::UI::startTitleX, Constant::UI::startTitleY, Constant::UI::FontSize::VeryLarge, YELLOW); // TODO: magic numbers
 
-	DrawText("PRESS SPACE TO BEGIN", 200, 350, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
+	DrawText("PRESS SPACE TO BEGIN", Constant::UI::startPromptX, Constant::UI::startPromptY, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
 }
 
 
 void Game::SpawnWalls()
 {
 	constexpr int gapCount{ Constant::Wall::amount + 1 };
-	int wall_distance = Constant::Window::Width / gapCount;
+	const int wall_distance = Constant::Window::Width / gapCount;
 
-	Walls.resize(Constant::Wall::amount);
-	int iterator = 1;
-	for (std::size_t i = 0; i < Walls.size(); ++i) //TODO: temporary raw for as nothing else is working
-	{
+	Walls = std::views::iota(1, Constant::Wall::amount + 1)
+		| std::views::transform([wall_distance](int iterator) {
 		Wall wall;
 		wall.position.y = Constant::Window::Height - Constant::Wall::positionOffset;
-		wall.position.x = wall_distance * iterator++;
-		Walls[i] = std::move(wall);
-	}
+		wall.position.x = wall_distance * iterator;
+		return wall;
+			})
+		| std::ranges::to<std::vector>();
 }
 
 void Game::SpawnAliens()
@@ -511,24 +522,16 @@ bool Game::CheckNewHighScore()
 }
 
 void Game::InsertNewHighScore(std::string name)
-{//TODO: raw for
-	//TODO: nesting
-	PlayerData newData;
-	newData.name = name;
-	newData.score = score;
+{
+	PlayerData newData{ std::move(name), score };
 
-	for (int i = 0; i < Leaderboard.size(); i++)
+	auto insertion_point = std::ranges::find_if(Leaderboard,
+		[&newData](const auto& entry) { return newData.score > entry.score; });
+
+	if (insertion_point != Leaderboard.end())
 	{
-		if (newData.score > Leaderboard[i].score)
-		{
-
-			Leaderboard.insert(Leaderboard.begin() + i, newData);
-
-			Leaderboard.pop_back();
-
-			i = Leaderboard.size();
-
-		}
+		Leaderboard.insert(insertion_point, std::move(newData));
+		Leaderboard.pop_back();
 	}
 }
 
@@ -555,9 +558,9 @@ void Player::Update()
 
 	x_pos += speed * direction;
 
-	if (x_pos < 0 + radius)
+	if (x_pos < radius)
 	{
-		x_pos = 0 + radius;
+		x_pos = radius;
 	}
 	else if (x_pos > Constant::Window::Width - radius)
 	{
@@ -667,7 +670,7 @@ void Wall::Render(Texture2D texture)
 		WHITE);
 
 
-	DrawText(TextFormat("%i", health), position.x - 21, position.y + 10, Constant::UI::FontSize::Medium, RED); // TODO: magic numbers
+	DrawText(TextFormat("%i", health), position.x + Constant::UI::wallHealthTextOffsetX, position.y + Constant::UI::wallHealthTextOffsetY, Constant::UI::FontSize::Medium, RED); // TODO: magic numbers
 
 }
 
@@ -728,7 +731,7 @@ void Star::Update(float starOffset)
 
 void Star::Render()
 {
-	DrawCircle((int)position.x, (int)position.y, size, color);
+	DrawCircleV(position, size, color);
 }
 
 

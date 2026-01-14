@@ -2,9 +2,8 @@
 #include <vector>
 #include "TextureManager.h"
 
-class Resources // TODO: struct?
+struct Resources // TODO: struct?
 { 
-public:
 	Resources();
 
 
