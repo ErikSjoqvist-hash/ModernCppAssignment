@@ -1,7 +1,6 @@
 #pragma once
 #include <stdexcept>
 #include <string>
-#include <cassert>
 
 // Throw by value and catch by (const) reference.
 namespace Errors
@@ -55,19 +54,6 @@ namespace Errors
 	inline void ensureInvariant(bool condition, const std::string& message)
 	{
 		if (!condition) throw InvariantViolation(message);
-	}
-
-	[[noreturn]] inline void programmingError(const std::string& message)
-	{
-		assert((message.c_str(), false));
-	}
-
-	inline void contractCheck(bool condition, const std::string& message)
-	{
-		if (!condition)
-		{
-			programmingError(message);
-		}
 	}
 
 

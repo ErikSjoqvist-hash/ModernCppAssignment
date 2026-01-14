@@ -32,9 +32,9 @@ int main()
 {
     Window window(Constant::Window::Config);
 
-    Game game{ State::STARTSCREEN };// TODO: would it ever be initialised to something else?
+    Game game{ State::STARTSCREEN };
 
-    while (!WindowShouldClose()) // TODO: catch exceptions somwhare
+    while (!WindowShouldClose()) 
     {
         game.HandleInput();
         game.Update();

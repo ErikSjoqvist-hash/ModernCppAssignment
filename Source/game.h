@@ -27,7 +27,7 @@ struct PlayerData
 };
 
 struct Player
-{//TODO: magic numbers
+{
 
 	float x_pos = 0;
 	float speed = Constant::Player::speed;
@@ -47,7 +47,7 @@ struct Player
 };
 
 struct Projectile
-{//TODO: magic numbers
+{
 	Vector2 position = { 0,0 };
 	int speed = Constant::Projectile::speed;
 	bool active = true;
@@ -62,7 +62,7 @@ struct Projectile
 };
 
 struct Wall
-{//TODO: magic numbers
+{
 	Vector2 position;
 	Rectangle rec;
 	bool active;
@@ -76,7 +76,7 @@ struct Wall
 };
 
 struct Alien
-{//TODO: magic numbers
+{
 
 	Color color = WHITE;
 	Vector2 position = { 0, 0 };
@@ -119,7 +119,7 @@ struct Background
 };
 
 class Game
-{//TODO: magic numbers
+{
 public:
 	explicit Game(State state = State{}) : gameState(state) {}
 	State gameState = {};
@@ -142,7 +142,15 @@ private:
 	void UpdateAliens();
 	void EraseInactiveEntities();
 	void HandleLoseConditions();
-	void Collision();
+	void ResolveCollisions();
+
+	void UpdateStartScreen();
+	void UpdateGameplayLogic();
+	void UpdateEndScreen();
+
+	void HandlePlayerProjectileCollisions(Projectile& proj);
+	void HandleEnemyProjectileCollisions(Projectile& proj);
+	void HandleProjectileWallCollisions(Projectile& proj);
 
 	void RenderLeaderboardMenu();
 
@@ -160,12 +168,11 @@ private:
 	void InsertNewHighScore(std::string name);
 
 
-
 	Resources resources;
 
 	Player player;
 
-	std::vector<Projectile> Projectiles; //TODO: pool?
+	std::vector<Projectile> Projectiles; 
 
 	std::vector<Wall> Walls;
 

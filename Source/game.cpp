@@ -21,7 +21,7 @@ void Game::Start()
 	SpawnWalls();
 
 
-	const Player newPlayer;// TODO: make reset player function
+	const Player newPlayer;
 	player = newPlayer;
 	player.Initialize();
 
@@ -29,7 +29,6 @@ void Game::Start()
 	SpawnAliens();
 
 	background.Initialize(Constant::starCount);
-
 
 	score = 0;
 
@@ -63,7 +62,6 @@ void Game::HandleInput()
 			{
 				Start();
 
-
 			}
 
 			break;
@@ -93,17 +91,12 @@ void Game::HandleInput()
 				Projectiles.push_back(newProjectile);
 			}
 
-			
-
-
 			break;
 		case State::ENDSCREEN:
 			if (IsKeyReleased(KEY_ENTER) && !newHighScore)
 			{
 				Continue();
 			}
-
-
 
 			if (newHighScore)
 			{
@@ -164,7 +157,6 @@ void Game::HandleInput()
 			}
 
 
-
 			break;
 		default:
 			break;
@@ -177,75 +169,22 @@ void Game::HandleInput()
 }
 
 void Game::Update()
-{//TODO: nesting
-	//TODO: magic numbers
-	//TODO: long function
+{
 	try {
-	switch (gameState)
-	{
-	case State::STARTSCREEN:
-
-
-		break;
-	case State::GAMEPLAY:
-
-
-		player.Update();
-
-
-		UpdateProjectiles();
-
-		UpdateWalls();
-
-		UpdateAliens();
-
-		HandleLoseConditions();
-
-
-		// TODO: improve
-		playerPos = { player.x_pos, player.player_base_height };
-		cornerPos = { 0, player.player_base_height };
-		offset = lineLength(playerPos, cornerPos) * -1;
-		background.Update(offset / Constant::Background::offsetDivisor);
-
-
-		Collision();
-
-
-
-		shootTimer++;
-		if (shootTimer >= Constant::Window::fps)
+		switch (gameState)
 		{
-			
-			if (!Aliens.empty())
-			{
-				int randomAlienIndex{0};
-				if (Aliens.size() > 1)
-				{
-					randomAlienIndex = GetRandomValue(0, static_cast<int>(Aliens.size()) - 1);
-				}
-
-				Projectile newProjectile;
-				newProjectile.position = Aliens[static_cast<std::size_t>(randomAlienIndex)].position;
-				newProjectile.position.y += Constant::Projectile::alienShootOffset;
-				newProjectile.speed = Constant::Projectile::speed * Constant::Direction::down;
-				newProjectile.type = EntityType::ENEMY_PROJECTILE;
-				Projectiles.push_back(newProjectile);
-			}
-			shootTimer = 0;
+		case State::STARTSCREEN:
+			UpdateStartScreen();
+			break;
+		case State::GAMEPLAY:
+			UpdateGameplayLogic();
+			break;
+		case State::ENDSCREEN:
+			UpdateEndScreen();
+			break;
+		default:
+			break;
 		}
-
-
-		EraseInactiveEntities();
-
-		break;
-	case State::ENDSCREEN:
-
-
-		break;
-	default:
-		break;
-	}
 	} catch (const Errors::GameError& e) {
 		std::print(stderr, "Game error in Update: {}\n", e.what());
 	} catch (const std::exception& e) {
@@ -253,27 +192,78 @@ void Game::Update()
 	}
 }
 
+void Game::UpdateStartScreen()
+{
+}
+
+void Game::UpdateGameplayLogic()
+{
+	player.Update();
+
+	UpdateProjectiles();
+
+	UpdateWalls();
+
+	UpdateAliens();
+
+	HandleLoseConditions();
+
+	playerPos = { player.x_pos, player.player_base_height };
+	cornerPos = { 0, player.player_base_height };
+	offset = lineLength(playerPos, cornerPos) * -1;
+	background.Update(offset / Constant::Background::offsetDivisor);
+
+	ResolveCollisions();
+
+	shootTimer++;
+	if (shootTimer >= Constant::Window::fps)
+	{
+		if (!Aliens.empty())
+		{
+			int randomAlienIndex{0};
+			if (Aliens.size() > 1)
+			{
+				randomAlienIndex = GetRandomValue(0, static_cast<int>(Aliens.size()) - 1);
+			}
+
+			Projectile newProjectile;
+			newProjectile.position = Aliens[static_cast<std::size_t>(randomAlienIndex)].position;
+			newProjectile.position.y += Constant::Projectile::alienShootOffset;
+			newProjectile.speed = Constant::Projectile::speed * Constant::Direction::down;
+			newProjectile.type = EntityType::ENEMY_PROJECTILE;
+			Projectiles.push_back(newProjectile);
+		}
+		shootTimer = 0;
+	}
+
+	EraseInactiveEntities();
+}
+
+void Game::UpdateEndScreen()
+{
+}
+
 
 void Game::UpdateProjectiles()
 {
-	std::ranges::for_each(Projectiles, [&](Projectile& projectile) { //TODO: inconsisten ampersand placement
+	std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
 		projectile.Update();
-		});
+	});
 }
 
 void Game::UpdateWalls()
 {
 	std::ranges::for_each(Walls, [&](Wall& wall) {
 		wall.Update();
-		});
+	});
 }
 
 void Game::UpdateAliens()
 {
 	std::ranges::for_each(Aliens, [&](Alien& alien) {
 		alien.Update();
-		});
-	if (Aliens.size() < 1)
+	});
+	if (Aliens.empty())
 	{
 		SpawnAliens();
 	}
@@ -300,60 +290,79 @@ void Game::HandleLoseConditions()
 {
 	if (std::ranges::any_of(Aliens, [&](const Alien& alien) {
 		return alien.position.y > Constant::Window::Height - player.player_base_height;
-		})) {
+	})) {
 		End();
 	}
 
 	if (player.lives < 1)
 	{
-		End(); // TODO: do not bother with rest of update after end()
+		End();
 	}
 }
 
 
-void Game::Collision()// TODO: improve name
-{// TODO: nesting
-	std::ranges::for_each(Projectiles, [&](Projectile& proj)
+void Game::ResolveCollisions()
+{
+	std::ranges::for_each(Projectiles, [&](Projectile& proj) {
+		if (!proj.active) {
+			return;
+		}
+
+		switch (proj.type)
 		{
-			if (proj.type == EntityType::PLAYER_PROJECTILE)
-			{
-				std::ranges::for_each(Aliens, [&](Alien& alien)
-					{
-						if (!alien.active)
-						{
-							return;
-						}
-						if (CheckCollisionCircleLine(alien.position, alien.radius, proj.lineStart, proj.lineEnd))
-						{
-							proj.active = false;
-							alien.active = false;
-							score += Constant::Score::alienKill;
-						}
-					});
-			}
+		case EntityType::PLAYER_PROJECTILE:
+			HandlePlayerProjectileCollisions(proj);
+			break;
+		case EntityType::ENEMY_PROJECTILE:
+			HandleEnemyProjectileCollisions(proj);
+			break;
+		default:
+			break;
+		}
 
-			if (proj.type == EntityType::ENEMY_PROJECTILE)
-			{
-				if (CheckCollisionCircleLine({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, proj.lineStart, proj.lineEnd))
-				{
-					proj.active = false;
-					player.lives -= 1;
-				}
-			}
+		HandleProjectileWallCollisions(proj);
+	});
+}
 
-			std::ranges::for_each(Walls, [&](Wall& wall)
-				{
-					if (!wall.active) 
-					{
-						return;
-					}
-					if (CheckCollisionCircleLine(wall.position, wall.radius, proj.lineStart, proj.lineEnd))
-					{
-						proj.active = false;
-						wall.health -= 1;
-					}
-				});
-		});
+void Game::HandlePlayerProjectileCollisions(Projectile& proj)
+{
+	std::ranges::for_each(Aliens, [&](Alien& alien) {
+		if (!alien.active)
+		{
+			return;
+		}
+
+		if (CheckCollisionCircleLine(alien.position, alien.radius, proj.lineStart, proj.lineEnd))
+		{
+			proj.active = false;
+			alien.active = false;
+			score += Constant::Score::alienKill;
+		}
+	});
+}
+
+void Game::HandleEnemyProjectileCollisions(Projectile& proj)
+{
+	if (CheckCollisionCircleLine({ player.x_pos, Constant::Window::Height - player.player_base_height }, player.radius, proj.lineStart, proj.lineEnd))
+	{
+		proj.active = false;
+		player.lives -= 1;
+	}
+}
+
+void Game::HandleProjectileWallCollisions(Projectile& proj)
+{
+	std::ranges::for_each(Walls, [&](Wall& wall) {
+		if (!wall.active)
+		{
+			return;
+		}
+		if (CheckCollisionCircleLine(wall.position, wall.radius, proj.lineStart, proj.lineEnd))
+		{
+			proj.active = false;
+			wall.health -= 1;
+		}
+	});
 }
 
 void Game::Render()
@@ -386,7 +395,7 @@ void Game::Render()
 		default:
 			break;
 		}
-	} catch (const Errors::GameError& e) { // TODO: wat
+	} catch (const Errors::GameError& e) {
 		Errors::throwIfSerious(false, std::string("Game error in Render: ") + e.what());
 	} catch (const std::exception& e) {
 		Errors::throwIfSerious(false, std::string("Unhandled exception in Render: ") + e.what());
@@ -423,12 +432,7 @@ void Game::RenderLeaderboardMenu()
 
 void Game::RenderNameInputMenu()
 {
-	//TODO: magic numbers
-	//TODO: long function
-	//TODO: casts
-	//TODO: nesting
 	DrawText("NEW HIGHSCORE!", Constant::UI::newHighScoreX, Constant::UI::newHighScoreY, Constant::UI::FontSize::Large, YELLOW);
-	
 
 	DrawText("PLACE MOUSE OVER INPUT BOX!", Constant::UI::inputBoxInfoX, Constant::UI::inputBoxInfoY, Constant::UI::FontSize::Small, YELLOW);
 
@@ -442,17 +446,17 @@ void Game::RenderNameInputMenu()
 		DrawRectangleLinesEx(Constant::UI::textBox, Constant::UI::LineThickness, DARKGRAY);
 	}
 
-	DrawText(name.c_str(), (int)Constant::UI::textBox.x + Constant::UI::inputTextPaddingX, (int)Constant::UI::textBox.y + Constant::UI::inputTextPaddingY, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
+	DrawText(name.c_str(), static_cast<int>(Constant::UI::textBox.x) + Constant::UI::inputTextPaddingX, static_cast<int>(Constant::UI::textBox.y) + Constant::UI::inputTextPaddingY, Constant::UI::FontSize::Medium, MAROON);
 
-	DrawText(TextFormat("INPUT CHARS: %i/%i", name.size(), Constant::UI::maxNameLength), Constant::UI::inputCharsX, Constant::UI::inputCharsY, Constant::UI::FontSize::Small, YELLOW);
+	DrawText(TextFormat("INPUT CHARS: %i/%i", static_cast<int>(name.size()), Constant::UI::maxNameLength), Constant::UI::inputCharsX, Constant::UI::inputCharsY, Constant::UI::FontSize::Small, YELLOW);
 
 	if (mouseOnText)
 	{
 		if (name.size() <= Constant::UI::maxNameLength)
 		{
-			if (((framesCounter / Constant::UI::cursorBlinkFrames) % 2) == 0) // TODO: magic numbers
+			if (((framesCounter / Constant::UI::cursorBlinkFrames) % 2) == 0) 
 			{
-				DrawText("_", (int)Constant::UI::textBox.x + Constant::UI::inputCursorOffsetX + MeasureText(name.c_str(), Constant::UI::FontSize::Medium), (int)Constant::UI::textBox.y + Constant::UI::inputCursorOffsetY, Constant::UI::FontSize::Medium, MAROON); // TODO: magic numbers
+				DrawText("_", static_cast<int>(Constant::UI::textBox.x) + Constant::UI::inputCursorOffsetX + MeasureText(name.c_str(), Constant::UI::FontSize::Medium), static_cast<int>(Constant::UI::textBox.y) + Constant::UI::inputCursorOffsetY, Constant::UI::FontSize::Medium, MAROON);
 			}
 
 		}
@@ -471,33 +475,32 @@ void Game::RenderNameInputMenu()
 
 void Game::RenderGameplay()
 {
-	//background render LEAVE THIS AT TOP
-	background.Render(); // TODO: render layers
+	background.Render(); 
 
-	DrawText(TextFormat("Score: %i", score), Constant::UI::scoreTextX, Constant::UI::scoreTextY, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
-	DrawText(TextFormat("Lives: %i", player.lives), Constant::UI::livesTextX, Constant::UI::livesTextY, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
+	DrawText(TextFormat("Score: %i", score), Constant::UI::scoreTextX, Constant::UI::scoreTextY, Constant::UI::FontSize::Medium, YELLOW); 
+	DrawText(TextFormat("Lives: %i", player.lives), Constant::UI::livesTextX, Constant::UI::livesTextY, Constant::UI::FontSize::Medium, YELLOW); 
 
 
 	player.Render(resources.shipTextures[player.activeTexture].Get());
 
 	std::ranges::for_each(Projectiles, [&](Projectile& projectile) {
 		projectile.Render(resources.laserTexture.Get());
-		});
+	});
 
 	std::ranges::for_each(Walls, [&](Wall& wall) {
 		wall.Render(resources.barrierTexture.Get());
-		});
+	});
 
 	std::ranges::for_each(Aliens, [&](Alien& alien) {
 		alien.Render(resources.alienTexture.Get());
-		});
+	});
 }
 
 void Game::RenderStartScreen()
 {
-	DrawText("SPACE INVADERS", Constant::UI::startTitleX, Constant::UI::startTitleY, Constant::UI::FontSize::VeryLarge, YELLOW); // TODO: magic numbers
+	DrawText("SPACE INVADERS", Constant::UI::startTitleX, Constant::UI::startTitleY, Constant::UI::FontSize::VeryLarge, YELLOW); 
 
-	DrawText("PRESS SPACE TO BEGIN", Constant::UI::startPromptX, Constant::UI::startPromptY, Constant::UI::FontSize::Medium, YELLOW); // TODO: magic numbers
+	DrawText("PRESS SPACE TO BEGIN", Constant::UI::startPromptX, Constant::UI::startPromptY, Constant::UI::FontSize::Medium, YELLOW); 
 }
 
 
@@ -522,8 +525,6 @@ void Game::SpawnAliens()
 {
 	Errors::ensurePrecondition(Constant::EnemyFormation::Width > 0 && Constant::EnemyFormation::Height > 0, "Enemy formation dimensions must be positive");
 
-	//TODO: nesting
-	//TODO: object pool
 	Aliens.reserve(Aliens.size() + (Constant::EnemyFormation::Height * Constant::EnemyFormation::Width));
 	std::ranges::for_each(std::views::iota(0, Constant::EnemyFormation::Height), [&](int row) {
 		std::ranges::for_each(std::views::iota(0, Constant::EnemyFormation::Width), [&](int col) {
@@ -533,7 +534,7 @@ void Game::SpawnAliens()
 			newAlien.position.y = Constant::EnemyFormation::YCord + (row * Constant::EnemyFormation::Spacing);
 			Aliens.push_back(newAlien);
 			});
-		});
+	});
 }
 
 bool Game::CheckNewHighScore()
@@ -590,7 +591,7 @@ void Player::Update()
 		x_pos = Constant::Window::Width - radius;
 	}
 
-
+	
 	timer += GetFrameTime();
 
 	if (timer > Constant::Animation::frameDuration && activeTexture == Constant::Animation::playerMaxTextureIndex)
@@ -608,7 +609,7 @@ void Player::Update()
 }
 
 void Player::Render(Texture2D texture)
-{//TODO: magic numbers
+{
 
 	DrawTexturePro(texture,
 		{
@@ -628,8 +629,7 @@ void Player::Render(Texture2D texture)
 
 
 void Projectile::Update()
-{//TODO: magic numbers
-	// precondition
+{
 	Errors::ensurePrecondition(Constant::Projectile::lineHalfLength > 0, "Projectile::lineHalfLength must be positive");
 
 	position.y -= speed;
@@ -647,7 +647,7 @@ void Projectile::Update()
 }
 
 void Projectile::Render(Texture2D texture)
-{//TODO: magic numbers
+{
 	DrawTexturePro(texture,
 		{
 			0,
@@ -678,7 +678,7 @@ void Wall::Update()
 }
 
 void Wall::Render(Texture2D texture)
-{//TODO: magic numbers
+{
 	DrawTexturePro(texture,
 		{
 			0,
@@ -696,14 +696,13 @@ void Wall::Render(Texture2D texture)
 		WHITE);
 
 
-	DrawText(TextFormat("%i", health), position.x + Constant::UI::wallHealthTextOffsetX, position.y + Constant::UI::wallHealthTextOffsetY, Constant::UI::FontSize::Medium, RED); // TODO: magic numbers
+	DrawText(TextFormat("%i", health), position.x + Constant::UI::wallHealthTextOffsetX, position.y + Constant::UI::wallHealthTextOffsetY, Constant::UI::FontSize::Medium, RED); 
 
 }
 
 
 void Alien::Update()
-{//TODO: nesting
-
+{
 	if (moveRight)
 	{
 		position.x += speed;
@@ -711,7 +710,7 @@ void Alien::Update()
 		if (position.x >= Constant::Window::Width)
 		{
 			moveRight = false;
-			position.y += Constant::EnemyFormation::rowDrop; // TODO: move drop to formation
+			position.y += Constant::EnemyFormation::rowDrop; 
 		}
 	}
 	else
@@ -727,10 +726,7 @@ void Alien::Update()
 }
 
 void Alien::Render(Texture2D texture)
-{//TODO: magic numbers
-
-
-
+{
 	DrawTexturePro(texture,
 		{
 			0,
@@ -764,7 +760,6 @@ void Star::Render()
 void Background::Initialize(int starAmount)
 {
 	Errors::ensurePrecondition(starAmount > 0, "starAmount must be positive");
-	//TODO: should starAmount constant be used directly?
 	Stars.reserve(Stars.size() + starAmount);
 	std::generate_n(std::back_inserter(Stars), starAmount, []() {
 		Star newStar;
@@ -780,12 +775,12 @@ void Background::Update(float offset)
 {
 	std::ranges::for_each(Stars, [&](Star& s) {
 		s.Update(offset);
-		});
+	});
 }
 
 void Background::Render()
 {
 	std::ranges::for_each(Stars, [&](Star& s) {
 		s.Render();
-		});
+	});
 }
