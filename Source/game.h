@@ -144,9 +144,7 @@ private:
 	void HandleLoseConditions();
 	void ResolveCollisions();
 
-	void UpdateStartScreen();
 	void UpdateGameplayLogic();
-	void UpdateEndScreen();
 
 	void HandlePlayerProjectileCollisions(Projectile& proj);
 	void HandleEnemyProjectileCollisions(Projectile& proj);

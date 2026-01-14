@@ -139,26 +139,22 @@ namespace Constant
 		constexpr int enterContinueX{ 600 };
 		constexpr int enterContinueY{ 800 };
 
-		// paddings and offsets for input box text and cursor
 		constexpr int inputTextPaddingX{ 5 };
 		constexpr int inputTextPaddingY{ 8 };
 		constexpr int inputCursorOffsetX{ 8 };
 		constexpr int inputCursorOffsetY{ 12 };
 		constexpr int cursorBlinkFrames{ 20 };
 
-		// small UI positions
 		constexpr int scoreTextX{ 50 };
 		constexpr int scoreTextY{ 20 };
 		constexpr int livesTextX{ 50 };
 		constexpr int livesTextY{ 70 };
 
-		// start screen positions
 		constexpr int startTitleX{ 200 };
 		constexpr int startTitleY{ 100 };
 		constexpr int startPromptX{ 200 };
 		constexpr int startPromptY{ 350 };
 
-		// wall HUD offsets
 		constexpr int wallHealthTextOffsetX{ -21 };
 		constexpr int wallHealthTextOffsetY{ 10 };
 

@@ -31,7 +31,7 @@ TextureManager::~TextureManager() noexcept
 TextureManager::TextureManager(TextureManager&& other) noexcept
     : texture{ other.texture }
 {
-    other.texture = {}; // TODO: std::exchange
+    other.texture = {}; 
 }
 
 TextureManager& TextureManager::operator=(TextureManager&& other) noexcept

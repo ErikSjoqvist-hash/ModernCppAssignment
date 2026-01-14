@@ -47,7 +47,6 @@ void Game::End()
 	}
 	catch (const Errors::GameError& e) {
 		std::print(stderr, "Error ending game: {}\n", e.what());
-		// Don't rethrow - we want to end the game even if there's an error
 		gameState = State::ENDSCREEN;
 	}
 }
@@ -175,20 +174,12 @@ void Game::HandleInput()
 void Game::Update()
 {
 	try {
-		switch (gameState)
+		
+		if (gameState == State::GAMEPLAY)
 		{
-		case State::STARTSCREEN:
-			UpdateStartScreen();
-			break;
-		case State::GAMEPLAY:
 			UpdateGameplayLogic();
-			break;
-		case State::ENDSCREEN:
-			UpdateEndScreen();
-			break;
-		default:
-			break;
-		}
+
+		} 
 	}
 	catch (const Errors::GameError& e) {
 		std::print(stderr, "Game error in Update: {}\n", e.what());
@@ -200,10 +191,6 @@ void Game::Update()
 	}
 }
 
-void Game::UpdateStartScreen()
-{
-	// No operations that can fail
-}
 
 void Game::UpdateGameplayLogic()
 {
@@ -254,10 +241,6 @@ void Game::UpdateGameplayLogic()
 	}
 }
 
-void Game::UpdateEndScreen()
-{
-	// No operations that can fail
-}
 
 void Game::UpdateProjectiles()
 {
@@ -332,7 +315,6 @@ void Game::HandleLoseConditions()
 		}
 	}
 	catch (const Errors::GameError& e) {
-		// End() might throw, but we still want to end the game
 		std::print(stderr, "Error checking lose conditions: {}\n", e.what());
 	}
 }
@@ -436,11 +418,9 @@ void Game::Render()
 	}
 	catch (const Errors::GameError& e) {
 		std::print(stderr, "Game error in Render: {}\n", e.what());
-		// Don't rethrow rendering errors - try to continue
 	}
 	catch (const std::exception& e) {
 		std::print(stderr, "Unhandled exception in Render: {}\n", e.what());
-		// Don't rethrow rendering errors - try to continue
 	}
 }
 
