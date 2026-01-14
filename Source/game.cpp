@@ -201,19 +201,22 @@ void Game::Update()
 		shootTimer++;
 		if (shootTimer >= Constant::Window::fps)
 		{
-			int randomAlienIndex{ 0 };
-
-			if (Aliens.size() > 1)
+			
+			if (!Aliens.empty())
 			{
-				randomAlienIndex = GetRandomValue(0, Aliens.size() - 1);
-			}
+				int randomAlienIndex{0};
+				if (Aliens.size() > 1)
+				{
+					randomAlienIndex = GetRandomValue(0, static_cast<int>(Aliens.size()) - 1);
+				}
 
-			Projectile newProjectile;
-			newProjectile.position = Aliens[randomAlienIndex].position;
-			newProjectile.position.y += Constant::Projectile::alienShootOffset;
-			newProjectile.speed = Constant::Projectile::speed * Constant::Direction::down;
-			newProjectile.type = EntityType::ENEMY_PROJECTILE;
-			Projectiles.push_back(newProjectile);
+				Projectile newProjectile;
+				newProjectile.position = Aliens[static_cast<std::size_t>(randomAlienIndex)].position;
+				newProjectile.position.y += Constant::Projectile::alienShootOffset;
+				newProjectile.speed = Constant::Projectile::speed * Constant::Direction::down;
+				newProjectile.type = EntityType::ENEMY_PROJECTILE;
+				Projectiles.push_back(newProjectile);
+			}
 			shootTimer = 0;
 		}
 

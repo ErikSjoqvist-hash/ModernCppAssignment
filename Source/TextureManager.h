@@ -6,7 +6,7 @@ class TextureManager
 {
 public:
     TextureManager() noexcept;
-    explicit TextureManager(const std::string_view path);
+    explicit TextureManager(const std::string_view path); 
     ~TextureManager() noexcept;
 
     TextureManager(const TextureManager&) = delete;

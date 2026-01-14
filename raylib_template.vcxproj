@@ -172,6 +172,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Source\Constants.h" />
+    <ClInclude Include="Source\Errors.h" />
     <ClInclude Include="Source\game.h" />
     <ClInclude Include="Source\Resources.h" />
     <ClInclude Include="Source\TextureManager.h" />
