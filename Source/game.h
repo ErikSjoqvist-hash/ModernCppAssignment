@@ -14,8 +14,6 @@ enum struct State
 
 enum struct EntityType
 {
-	PLAYER,
-	ENEMY,
 	PLAYER_PROJECTILE,
 	ENEMY_PROJECTILE
 };
@@ -37,8 +35,6 @@ struct Player
 	int direction = 0;
 	int activeTexture = Constant::Player::activeTexture;
 	float timer = 0;
-
-	EntityType type = EntityType::PLAYER;
 
 	void Initialize();
 	void Render(Texture2D texture);
@@ -72,7 +68,7 @@ struct Wall
 
 
 	void Render(Texture2D texture);
-	void Update();
+	void Update() noexcept;
 };
 
 struct Alien
@@ -86,11 +82,9 @@ struct Alien
 	bool active = true;
 	bool moveRight = true;
 
-	EntityType type = EntityType::ENEMY;
-
 	int speed = Constant::Alien::speed;
 
-	void Update();
+	void Update() noexcept;
 	void Render(Texture2D texture);
 };
 
@@ -101,16 +95,15 @@ struct Star
 	Vector2 position = { 0, 0 };
 	Color color = GRAY;
 	float size = 0;
-	void Update(float starOffset);
-	void Render();
+	void Update(float starOffset) noexcept;
+	void Render() noexcept;
 };
 
 struct Background
 {
-	void Render();
+	void Render() noexcept;
 	void Initialize(int starAmount);
-	void Update(float offset);
-
+	void Update(float offset) noexcept;
 
 
 	std::vector<Star> Stars;
@@ -121,10 +114,9 @@ struct Background
 class Game
 {
 public:
-	explicit Game(State state = State{}) : gameState(state) {}
+	explicit Game(State state = State{}) noexcept : gameState(state) {}
+
 	State gameState = {};
-
-
 
 	void HandleInput();
 	void Update();
@@ -133,71 +125,49 @@ public:
 private:
 	void Start();
 	void End();
-
-	void Continue();
-
-
+	void Continue() noexcept;
 	void UpdateProjectiles();
 	void UpdateWalls();
 	void UpdateAliens();
 	void EraseInactiveEntities();
 	void HandleLoseConditions();
 	void ResolveCollisions();
-
 	void UpdateGameplayLogic();
-
 	void HandlePlayerProjectileCollisions(Projectile& proj);
-	void HandleEnemyProjectileCollisions(Projectile& proj);
+	void HandleEnemyProjectileCollisions(Projectile& proj) noexcept;
 	void HandleProjectileWallCollisions(Projectile& proj);
-
-	void RenderLeaderboardMenu();
-
-	void RenderNameInputMenu();
-
+	void RenderLeaderboardMenu() noexcept;
+	void RenderNameInputMenu() noexcept;
 	void RenderGameplay();
-
-	void RenderStartScreen();
-
+	void RenderStartScreen() noexcept;
 	void SpawnWalls();
 	void SpawnAliens();
-
 	bool CheckNewHighScore();
-
 	void InsertNewHighScore(std::string name);
 
+	Resources resources{};
+	Player player{};
+	std::vector<Projectile> Projectiles{};
+	std::vector<Wall> Walls{};
+	std::vector<Alien> Aliens{};
+	std::vector<PlayerData> Leaderboard{
+		{"Player 1", 500},
+		{"Player 2", 400},
+		{"Player 3", 300},
+		{"Player 4", 200},
+		{"Player 5", 100}
+	};
+	Background background{};
 
-	Resources resources;
+	Vector2 playerPos{};
+	Vector2 alienPos{};
+	Vector2 cornerPos{};
+	float offset{};
+	float shootTimer{};
+	std::string name{};
 
-	Player player;
-
-	std::vector<Projectile> Projectiles; 
-
-	std::vector<Wall> Walls;
-
-	std::vector<Alien> Aliens;
-
-	std::vector<PlayerData> Leaderboard = { {"Player 1", 500}, {"Player 2", 400}, {"Player 3", 300}, {"Player 4", 200}, {"Player 5", 100} };
-
-	Background background;
-
-
-
-	
-	Vector2 playerPos;
-	Vector2 alienPos;
-	Vector2 cornerPos;
-	float offset;
-
-	float shootTimer = 0;
-
-
-	std::string name{ };
-
-	
-	bool mouseOnText = false;
-	bool newHighScore = false;
-
-	int framesCounter = 0;
-	int score;
-
+	bool mouseOnText{};
+	bool newHighScore{};
+	int framesCounter{};
+	int score{};
 };

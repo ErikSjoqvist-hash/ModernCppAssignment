@@ -2,12 +2,11 @@
 #include "Constants.h"
 #include "Errors.h"
 #include <format>
-#include <print>
 #include <vector>
 #include <algorithm>
 #include <ranges>
 
-float lineLength(Vector2 A, Vector2 B)
+float lineLength(Vector2 A, Vector2 B) noexcept
 {
 	const float length = sqrtf(pow(B.x - A.x, 2) + pow(B.y - A.y, 2));
 	return length;
@@ -39,7 +38,7 @@ void Game::End()
 	gameState = State::ENDSCREEN;
 }
 
-void Game::Continue()
+void Game::Continue() noexcept
 {
 	gameState = State::STARTSCREEN;
 }
@@ -288,7 +287,7 @@ void Game::HandlePlayerProjectileCollisions(Projectile& proj)
 		});
 }
 
-void Game::HandleEnemyProjectileCollisions(Projectile& proj)
+void Game::HandleEnemyProjectileCollisions(Projectile& proj) noexcept
 {
 	if (CheckCollisionCircleLine({ player.x_pos, Constant::Window::Height - player.player_base_height },
 		player.radius, proj.lineStart, proj.lineEnd))
@@ -340,7 +339,7 @@ void Game::Render()
 	}
 }
 
-void Game::RenderLeaderboardMenu()
+void Game::RenderLeaderboardMenu() noexcept
 {
 	DrawText("PRESS ENTER TO CONTINUE",
 		Constant::UI::continueTextX,
@@ -368,7 +367,7 @@ void Game::RenderLeaderboardMenu()
 	}
 }
 
-void Game::RenderNameInputMenu()
+void Game::RenderNameInputMenu() noexcept
 {
 	DrawText("NEW HIGHSCORE!", Constant::UI::newHighScoreX, Constant::UI::newHighScoreY,
 		Constant::UI::FontSize::Large, YELLOW);
@@ -443,7 +442,7 @@ void Game::RenderGameplay()
 		});
 }
 
-void Game::RenderStartScreen()
+void Game::RenderStartScreen() noexcept
 {
 	DrawText("SPACE INVADERS", Constant::UI::startTitleX, Constant::UI::startTitleY,
 		Constant::UI::FontSize::VeryLarge, YELLOW);
@@ -457,10 +456,10 @@ void Game::SpawnWalls()
 	Errors::ensurePrecondition(Constant::Wall::amount > 0, "Wall amount must be greater than zero");
 
 	constexpr int gapCount{ Constant::Wall::amount + 1 };
-	const int wall_distance = Constant::Window::Width / gapCount;
+	constexpr int wall_distance = Constant::Window::Width / gapCount;
 
 	Walls = std::views::iota(1, Constant::Wall::amount + 1)
-		| std::views::transform([wall_distance](int iterator) {
+		| std::views::transform([](int iterator) {
 		Wall wall;
 		wall.position.y = Constant::Window::Height - Constant::Wall::positionOffset;
 		wall.position.x = wall_distance * iterator;
@@ -477,7 +476,7 @@ void Game::SpawnAliens()
 	Errors::ensurePrecondition(Constant::EnemyFormation::Width > 0 && Constant::EnemyFormation::Height > 0,
 		"Enemy formation dimensions must be positive");
 
-	const std::size_t expectedCount = Constant::EnemyFormation::Height * Constant::EnemyFormation::Width;
+	constexpr std::size_t expectedCount = Constant::EnemyFormation::Height * Constant::EnemyFormation::Width;
 	Aliens.reserve(Aliens.size() + expectedCount);
 
 	std::ranges::for_each(std::views::iota(0, Constant::EnemyFormation::Height), [&](int row) {
@@ -626,7 +625,7 @@ void Projectile::Render(Texture2D texture)
 		WHITE);
 }
 
-void Wall::Update()
+void Wall::Update() noexcept
 {
 	if (health < 1)
 	{
@@ -659,7 +658,7 @@ void Wall::Render(Texture2D texture)
 		position.y + Constant::UI::wallHealthTextOffsetY, Constant::UI::FontSize::Medium, RED);
 }
 
-void Alien::Update()
+void Alien::Update() noexcept
 {
 	if (moveRight)
 	{
@@ -705,13 +704,13 @@ void Alien::Render(Texture2D texture)
 		WHITE);
 }
 
-void Star::Update(float starOffset)
+void Star::Update(float starOffset) noexcept
 {
 	position.x = initPosition.x + starOffset;
 	position.y = initPosition.y;
 }
 
-void Star::Render()
+void Star::Render() noexcept
 {
 	DrawCircleV(position, size, color);
 }
@@ -735,14 +734,14 @@ void Background::Initialize(int starAmount)
 		"Star count mismatch after initialization");
 }
 
-void Background::Update(float offset)
+void Background::Update(float offset) noexcept
 {
 	std::ranges::for_each(Stars, [&](Star& s) {
 		s.Update(offset);
 		});
 }
 
-void Background::Render()
+void Background::Render() noexcept
 {
 	std::ranges::for_each(Stars, [&](Star& s) {
 		s.Render();

@@ -8,7 +8,7 @@ struct Resources
 
 
 	std::vector<TextureManager> shipTextures;
-	const TextureManager alienTexture;
-	const TextureManager barrierTexture;
-	const TextureManager laserTexture;
+	TextureManager alienTexture;
+	TextureManager barrierTexture;
+	TextureManager laserTexture;
 };

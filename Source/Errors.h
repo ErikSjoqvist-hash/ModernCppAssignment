@@ -8,7 +8,6 @@ namespace Errors
 	{
 	public:
 		explicit GameError(const std::string& message) : std::runtime_error(message) {}
-		explicit GameError(std::string&& message) : std::runtime_error(std::move(message)) {}
 	};
 
 	class ResourceError : public GameError
