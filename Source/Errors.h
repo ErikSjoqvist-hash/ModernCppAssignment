@@ -16,11 +16,6 @@ namespace Errors
 	public:
 		explicit ResourceError(const std::string& message) : GameError(message) {}
 	};
-	class FileError : public GameError
-	{
-	public:
-		explicit FileError(const std::string& message) : GameError(message) {}
-	};
 	class PreconditionError : public GameError
 	{
 	public:
